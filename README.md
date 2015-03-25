@@ -23,12 +23,12 @@ First, the following components must be installed:
  - `limas` available at: https://bitbucket.org/alyr/limas
  - `axes-home` available at: https://bitbucket.org/kevinmcguinness/axes-home
 
-Following this, `components.json` must be updated with the path of each
+Following this, `component_paths.json` must be updated with the path of each
 of the components on the system.
 
 For convenience, a script is provided to undertake these two steps,
 downloading a copy of each component and placing them within the
-AXES-LITE directory, and then updating `components.json`:
+AXES-LITE directory, and then updating `component_paths.json`:
 
     $ python get_components.py
 

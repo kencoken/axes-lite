@@ -13,7 +13,7 @@ if not os.path.isdir('limas'):
 if not os.path.isdir('axes-home'):
     os.system('git clone git@bitbucket.org:kevinmcguinness/axes-home.git')
 
-# update components.json with paths if is default value
+# update component_paths.json with paths if is default value
 
 default_val = '<PATH>'
 paths = {
@@ -23,7 +23,7 @@ paths = {
 }
 updated_component_paths = False
 
-with open('components.json', 'r') as f:
+with open('component_paths.json', 'r') as f:
     components = json.load(f)
 
 for (key, value) in paths.iteritems():
@@ -32,7 +32,7 @@ for (key, value) in paths.iteritems():
         updated_component_paths = True
 
 if updated_component_paths:
-    with open('components.json', 'w') as f:
+    with open('component_paths.json', 'w') as f:
         json.dump(components, f,
                   sort_keys=True,
                   indent=4,
