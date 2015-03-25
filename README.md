@@ -22,21 +22,28 @@ First, the following components must be installed:
  - `cpuvisor-srv` available at: https://github.com/kencoken/cpuvisor-srv
  - `limas` available at: https://bitbucket.org/alyr/limas
  - `axes-home` available at: https://bitbucket.org/kevinmcguinness/axes-home
- 
-For convenience, a script is provided to obtain a copy of each of these
-components and place them within the AXES-LITE directory:
 
-    $ ./get_components.sh
-    
-Once a copy has been obtained of each of the components, the instructions
-contained in their respective `README` files should be used to install them
-and their dependencies.
+Following this, `components.json` must be updated with the path of each
+of the components on the system.
+
+For convenience, a script is provided to undertake these two steps,
+downloading a copy of each component and placing them within the
+AXES-LITE directory, and then updating `components.json`:
+
+    $ python get_components.py
+
+Once a copy has been obtained of each of the components, whether using
+the script or manually, the instructions in their respective `README` files
+should be followed to complete their individual installation along with their
+dependencies.
 
 ### Linking the components together
 
-    $ ./setup_env.sh
-    $ python link.py
-    $ python index.py
+Now that the individual system components have been downloaded and their paths
+specified in
+
+    $ python link_components.py
+    $ python index_data.py
 
 Usage
 -----
