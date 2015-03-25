@@ -40,10 +40,17 @@ dependencies.
 ### Linking the components together
 
 Now that the individual system components have been downloaded and their paths
-specified in
+specified in `component_paths.json`, we first link the systems together:
 
     $ python link_components.py
-    $ python index_data.py
+
+**FIXME: link_components.py actually contains some preprocessing for cpuvisor-srv also (the computation of negative features)**
+
+Then we can index for a given dataset:
+
+    $ python index_data.py <DATASET_NAME>=<DATASET_PATH>
+
+**TODO: Add details of sample data here**
 
 Usage
 -----

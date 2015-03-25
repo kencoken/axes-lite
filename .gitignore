@@ -1,0 +1,4 @@
+*.pyc
+/cpuvisor-srv
+/limas
+/axes-home
