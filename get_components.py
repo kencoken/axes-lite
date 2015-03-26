@@ -3,6 +3,7 @@
 # Get AXES-LITE components and store paths - see README.md for details
 
 import os
+import subprocess
 import json
 import pprint
 
@@ -11,15 +12,15 @@ import pprint
 # TODO: should download a specific tag
 
 if not os.path.isdir('cpuvisor-srv'):
-    os.system('git clone git@github.com:kencoken/cpuvisor-srv.git')
-    os.system('cd cpuvisor-srv')
-    os.system('git checkout al-integration-prep') # TODO: remove this custom branch
+    subprocess.call('git clone git@github.com:kencoken/cpuvisor-srv.git', shell=True)
+    subprocess.call('cd cpuvisor-srv', shell=True)
+    subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
 
 if not os.path.isdir('limas'):
-    os.system('hg clone ssh://hg@bitbucket.org/alyr/limas')
+    subprocess.call('hg clone ssh://hg@bitbucket.org/alyr/limas', shell=True)
 
 if not os.path.isdir('axes-home'):
-    os.system('git clone git@bitbucket.org:kevinmcguinness/axes-home.git')
+    subprocess.call('git clone git@bitbucket.org:kevinmcguinness/axes-home.git', shell=True)
 
 # update component_paths.json with paths if is default value
 
