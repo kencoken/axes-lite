@@ -1,13 +1,12 @@
 {
     "paths": {
         "cpuvisor-srv": "<PATH>",
-        "limas": "limas",
+        "imsearch-tools": "<PATH>",
+        "limas": "<PATH>",
         "axes-home": "<PATH>",
         "collection": "collection",
         "index": "index",
         "data": "data/cAXESOpenMini"
-        "imsearch-tools": "<PATH>",
-        "axes-home": "<PATH>"
     },
     "links": {
         "cpuvisor-srv": {
@@ -19,7 +18,6 @@
         },
         "limas": {
           "collection_name": "cAXESOpen",
-          "cpuvisor_port": "5555",
           "limas_port": 8081,
           "collection_url": "http://"
         },

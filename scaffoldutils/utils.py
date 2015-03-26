@@ -62,11 +62,11 @@ def load_componentcfg(base_path):
 
     return componentcfg
 
-def copyReplace(src, dst, repl):
-  
+
+def copy_replace(src, dst, repl):
+
   for line in src:
     for pat,rep in repl:
       if pat in line:
         line = line.replace(pat, rep)
     dst.write(line)
-  

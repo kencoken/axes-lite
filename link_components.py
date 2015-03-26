@@ -5,11 +5,12 @@
 import os
 import subprocess
 import shutil
+import re
 from scaffoldutils import utils
 
 import logging
 log = logging.getLogger(__name__)
-logging.basicConfig(filename='example.log',level=logging.DEBUG)
+logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
 CPUVISOR_DOWNLOAD_NEG_FEATS_URL = ""
@@ -61,24 +62,47 @@ def prepare_cpuvisor(base_path, componentcfg):
         with utils.change_cwd(os.path.join(componentcfg['paths']['cpuvisor-srv'], 'bin')):
             subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
+
 def prepare_limas(base_path, componentcfg):
+
     log.info('[limas] Preparing config...')
+
     paths = componentcfg['paths']
     links = componentcfg['links']
+
     with utils.change_cwd(paths['limas']):
-      utils.copyReplace(open('set_env.sh.template'), open('set_env.sh', 'w'), [
-        ('<directory to limas>', paths['limas']),
-        ('<name of the collection that this instance should host>', links['limas']['collection_name']),
-        ('<port under which the instance should run>', str(links['limas']['limas_port'])),
-        ('<directory to external data>', paths['data']),
-      ])
-      utils.copyReplace(open('conf/conf-template.py'), open('conf/' + links['limas']['collection_name'] + '.py', 'w'), [
-        ('<COLLECTION_NAME>', links['limas']['collection_name']),
-        ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>', paths['collection']),
-        ('<PATH_TO_INDEX_STRUCTURES>', paths['index']),
-        ('<CPUVISOR_PORT>', links['limas']['cpuvisor_port']),
-        ('<URL_TO_COLLECTION_PATH>', links['limas']['collection_url']),
-      ])
+
+        set_env_replace_patterns = [
+            ('<directory to limas>',
+             paths['limas']),
+            ('<name of the collection that this instance should host>',
+             links['limas']['collection_name']),
+            ('<port under which the instance should run>',
+             str(links['limas']['limas_port'])),
+            ('<directory to external data>',
+             paths['data'])
+        ]
+
+        with open('set_env.sh.template', 'r') as src_f:
+            with open('set_env.sh', 'w') as dst_f:
+                utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
+
+        conf_replace_patterns = [
+            ('<COLLECTION_NAME>',
+             links['limas']['collection_name']),
+            ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>',
+             paths['collection']),
+            ('<PATH_TO_INDEX_STRUCTURES>',
+             paths['index']),
+            ('<CPUVISOR_PORT>',
+             re.search(':([0-9]+)', links['cpuvisor-srv']['server_endpoint']).group(1)),
+            ('<URL_TO_COLLECTION_PATH>',
+             links['limas']['collection_url'])
+        ]
+
+        with open('conf/conf-template.py', 'r') as src_f:
+            with open('conf/' + links['limas']['collection_name'] + '.py', 'w') as dst_f:
+                utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
 
 def prepare_axes_home(base_path, componentcfg):
@@ -94,11 +118,11 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
     componentcfg = utils.load_componentcfg(file_dir)
 
-    # log.info('Preparing cpuvisor-srv component...')
-    # prepare_cpuvisor(file_dir, componentcfg)
+    log.info('Preparing cpuvisor-srv component...')
+    prepare_cpuvisor(file_dir, componentcfg)
 
     log.info('Preparing limas component...')
     prepare_limas(file_dir, componentcfg)
 
-    # log.info('Preparing axes-home component...')
-    # prepare_axes_home(file_dir, componentcfg)
+    log.info('Preparing axes-home component...')
+    prepare_axes_home(file_dir, componentcfg)
