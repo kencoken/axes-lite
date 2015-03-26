@@ -6,6 +6,7 @@ import os
 import subprocess
 import json
 import pprint
+from scaffoldutils import utils
 
 # clone components
 
@@ -13,8 +14,8 @@ import pprint
 
 if not os.path.isdir('cpuvisor-srv'):
     subprocess.call('git clone git@github.com:kencoken/cpuvisor-srv.git', shell=True)
-    subprocess.call('cd cpuvisor-srv', shell=True)
-    subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
+    with utils.change_cwd('cpuvisor-srv'):
+        subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
 
 if not os.path.isdir('limas'):
     subprocess.call('hg clone ssh://hg@bitbucket.org/alyr/limas', shell=True)
