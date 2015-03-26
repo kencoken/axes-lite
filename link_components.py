@@ -76,7 +76,7 @@ def prepare_limas(base_path, componentcfg):
         ('<COLLECTION_NAME>', links['limas']['collection_name']),
         ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>', paths['collection']),
         ('<PATH_TO_INDEX_STRUCTURES>', paths['index']),
-        ('<CPUVISOR_PORT>', links['limas']['cpuvisor_port']),
+        ('<CPUVISOR_PORT>', str(links['cpuvisor-srv']['server_port'])),
         ('<URL_TO_COLLECTION_PATH>', links['limas']['collection_url']),
       ])
 
