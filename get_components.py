@@ -33,17 +33,17 @@ paths = {
 }
 updated_component_paths = False
 
-with open('component_paths.json', 'r') as f:
-    component_paths = json.load(f)
+with open(utils.COMPONENTCFG_FILE, 'r') as f:
+    component_opts = json.load(f)
 
 for (key, value) in paths.iteritems():
-    if key not in component_paths or component_paths[key] == default_val:
-        component_paths[key] = value
+    if key not in component_opts['paths'] or component_opts['paths'][key] == default_val:
+        component_opts['paths'][key] = value
         updated_component_paths = True
 
 if updated_component_paths:
-    with open('component_paths.json', 'w') as f:
-        json.dump(component_paths, f,
+    with open(utils.COMPONENTCFG_FILE, 'w') as f:
+        json.dump(component_opts, f,
                   sort_keys=True,
                   indent=4,
                   separators=(',', ': '))

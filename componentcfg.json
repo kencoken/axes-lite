@@ -1,0 +1,19 @@
+{
+    "paths": {
+        "cpuvisor-srv": "<PATH>",
+        "limas": "<PATH>",
+        "axes-home": "<PATH>"
+    },
+    "links": {
+        "cpuvisor-srv": {
+            "server_endpoint": "tcp://127.0.0.1:5555",
+            "notify_endpoint": "tcp://127.0.0.1:5556"
+        },
+        "limas": {
+
+        },
+        "axes-home": {
+
+        }
+    }
+}
