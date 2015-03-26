@@ -38,7 +38,7 @@ def import_python_module_from_path(path, module_name):
 
 
 @contextlib.contextmanager
-def change_cwd_tmp(path):
+def change_cwd(path):
     old_cwd = os.getcwd()
     os.chdir(path)
 

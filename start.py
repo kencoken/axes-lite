@@ -12,12 +12,12 @@ logging.basicConfig()
 
 
 def start_cpuvisor(base_path, component_paths):
-    with utils.change_cwd_tmp(os.path.join(component_paths['cpuvisor-srv'], 'utils')):
+    with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'utils')):
         subprocess.call('./start_service.sh', shell=True)
 
 
 def stop_cpuvisor(base_path, component_paths):
-    with utils.change_cwd_tmp(os.path.join(component_paths['cpuvisor-srv'], 'utils')):
+    with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'utils')):
         subprocess.call('./stop_service.sh', shell=True)
 
 
