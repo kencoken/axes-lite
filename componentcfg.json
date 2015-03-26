@@ -6,11 +6,16 @@
         "collection": "collection",
         "index": "index",
         "data": "data/cAXESOpenMini"
+        "imsearch-tools": "<PATH>",
+        "axes-home": "<PATH>"
     },
     "links": {
         "cpuvisor-srv": {
             "server_endpoint": "tcp://127.0.0.1:5555",
             "notify_endpoint": "tcp://127.0.0.1:5556"
+        },
+        "imsearch-tools": {
+            "server_port": 8157
         },
         "limas": {
           "collection_name": "cAXESOpen",

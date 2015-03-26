@@ -48,7 +48,7 @@ specified in `componentcfg.json`, we first link the systems together:
 
 Then we can index for a given dataset:
 
-    $ python index_data.py <DATASET_NAME>=<DATASET_PATH>
+    $ python index_data.py <DATASET_NAME> <DATASET_PATH>
 
 **TODO: Add details of sample data here**
 

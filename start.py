@@ -21,6 +21,12 @@ def stop_cpuvisor(base_path, componentcfg):
         subprocess.call('./stop_service.sh', shell=True)
 
 
+def start_imsearch_tools(base_path, componentcfg):
+    with utils.change_cwd(os.path.join(componentcfg['paths']['imsearch-tools'], 'utils')):
+        subprocess.call(['./start_server.sh', componentcfg['links']['imsearch-tools']['server_port']],
+                        shell=True)
+
+
 def start_limas(base_path, componentcfg):
     pass
 
@@ -39,6 +45,9 @@ if __name__ == "__main__":
 
     log.info('Starting cpuvisor-srv component...')
     start_cpuvisor(file_dir, componentcfg)
+
+    log.info('Starting imsearch-tools component...')
+    start_imsearch_tools(file_dir, componentcfg)
 
     log.info('Starting limas component...')
     start_limas(file_dir, componentcfg)

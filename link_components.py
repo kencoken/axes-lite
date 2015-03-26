@@ -12,6 +12,9 @@ log = logging.getLogger(__name__)
 logging.basicConfig(filename='example.log',level=logging.DEBUG)
 
 
+CPUVISOR_DOWNLOAD_NEG_FEATS_URL = ""
+
+
 def prepare_cpuvisor(base_path, componentcfg):
 
     cpuvisortls = utils.import_python_module_from_path(componentcfg['paths']['cpuvisor-srv'],
@@ -19,22 +22,44 @@ def prepare_cpuvisor(base_path, componentcfg):
 
     # prepare config
     log.info('[cpuvisor] Preparing config...')
-    # cpuvisortls.prepare_config_proto(componentcfg['paths']['cpuvisor-srv'])
+    cpuvisortls.prepare_config_proto(componentcfg['paths']['cpuvisor-srv'])
 
-    # # download neg images
-    # log.info('[cpuvisor] Downloading negative training images...')
-    # target_dir = os.path.join(componentcfg['paths']['cpuvisor-srv'], 'server_data', 'neg_images')
-    # download_neg_images(target_dir)
+    # set endpoints
+    cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
+                                 'server_config.server_endpoint',
+                                 componentcfg['links']['cpuvisor-srv']['server_endpoint'])
+    cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
+                                 'server_config.notify_endpoint',
+                                 componentcfg['links']['cpuvisor-srv']['notify_endpoint'])
 
-    # # download models
-    # log.info('[cpuvisor] Downloading models...')
-    # target_dir = os.path.join(componentcfg['paths']['cpuvisor-srv'], 'model_data')
-    # download_models(target_dir)
+    # download neg images
+    log.info('[cpuvisor] Downloading negative training images...')
+    target_dir = os.path.join(componentcfg['paths']['cpuvisor-srv'], 'server_data', 'neg_images')
+    download_neg_images(target_dir)
 
-    # compute features for negative images
-    log.info('[cpuvisor] Computing features for negative images...')
-    with utils.change_cwd(os.path.join(componentcfg['paths']['cpuvisor-srv'], 'bin')):
-        subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
+    # download models
+    log.info('[cpuvisor] Downloading models...')
+    target_dir = os.path.join(componentcfg['paths']['cpuvisor-srv'], 'model_data')
+    download_models(target_dir)
+
+    if CPUVISOR_DOWNLOAD_NEG_FEATS_URL:
+        # download features for negative images
+        log.info('[cpuvisor] Dowloading features for negative images...')
+        negfeats_path = os.path.join(componentcfg['paths']['cpuvisor-srv'],
+                                     'server_data', 'negfeats.binaryproto')
+
+        cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
+                                     'preproc_config.neg_feats_file',
+                                     negfeats_path)
+
+        cpuvisortls.download_url(CPUVISOR_DOWNLOAD_NEG_FEATS_URL,
+                                 negfeats_path)
+
+    else:
+        # compute features for negative images
+        log.info('[cpuvisor] Computing features for negative images...')
+        with utils.change_cwd(os.path.join(componentcfg['paths']['cpuvisor-srv'], 'bin')):
+            subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
 def prepare_limas(base_path, componentcfg):
     log.info('[limas] Preparing config...')
