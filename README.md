@@ -23,12 +23,14 @@ First, the following components must be installed:
  - `limas` available at: https://bitbucket.org/alyr/limas
  - `axes-home` available at: https://bitbucket.org/kevinmcguinness/axes-home
 
-Following this, `componentcfg.json` must be updated with the path of each
-of the components on the system.
+Following this, a `component_cfgs.json` must be created with the paths of
+each of the components of the system. A template is provided for this purpose
+`component_cfgs.json.tmpl`, in which the location of each of the above
+components should be inserted.
 
 For convenience, a script is provided to undertake these two steps,
 downloading a copy of each component and placing them within the
-AXES-LITE directory, and then updating `componentcfg.json`:
+AXES-LITE directory, and then creating `component_cfgs.json`:
 
     $ python get_components.py
 
@@ -40,7 +42,7 @@ dependencies.
 ### Linking the components together
 
 Now that the individual system components have been downloaded and their paths
-specified in `componentcfg.json`, we first link the systems together:
+specified in `component_cfgs.json`, we first link the systems together:
 
     $ python link_components.py
 

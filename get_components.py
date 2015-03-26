@@ -37,7 +37,7 @@ paths = {
 }
 updated_component_paths = False
 
-with open(utils.COMPONENTCFG_FILE, 'r') as f:
+with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
     component_opts = json.load(f)
 
 for (key, value) in paths.iteritems():
@@ -46,7 +46,7 @@ for (key, value) in paths.iteritems():
         updated_component_paths = True
 
 if updated_component_paths:
-    with open(utils.COMPONENTCFG_FILE, 'w') as f:
+    with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
         json.dump(component_opts, f,
                   sort_keys=True,
                   indent=4,

@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 logging.basicConfig()
 
 
-COMPONENTCFG_FILE = 'componentcfg.json'
+COMPONENT_CFGS_FILE = 'component_cfgs.json'
 
 
 def import_python_module_from_path(path, module_name):
@@ -50,17 +50,17 @@ def change_cwd(path):
     os.chdir(old_cwd)
 
 
-def load_componentcfg(base_path):
+def load_component_cfgs(base_path):
 
-    with open(COMPONENTCFG_FILE, 'r') as f:
-        componentcfg = json.load(f)
+    with open(COMPONENT_CFGS_FILE, 'r') as f:
+        component_cfgs = json.load(f)
 
     # convert all component paths to absolute paths
-    for (key, value) in componentcfg['paths'].iteritems():
+    for (key, value) in component_cfgs['paths'].iteritems():
         if not os.path.isabs(value):
-            componentcfg['paths'][key] = os.path.normpath(os.path.join(base_path, value))
+            component_cfgs['paths'][key] = os.path.normpath(os.path.join(base_path, value))
 
-    return componentcfg
+    return component_cfgs
 
 
 def copy_replace(src, dst, repl):

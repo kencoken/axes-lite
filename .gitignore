@@ -1,4 +1,5 @@
 *.pyc
-/cpuvisor-srv
-/limas
-/axes-home
+/component_cfgs.json
+/cpuvisor-srv/
+/limas/
+/axes-home/
