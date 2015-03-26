@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import argparse
 from scaffoldutils import utils
 
 import logging
@@ -48,7 +49,7 @@ def index_cpuvisor(base_path, component_paths,
 
     # compute features for dataset
     log.info('[cpuvisor] Computing features for dataset...')
-    with change_cwd_tmp(os.path.join(component_paths['cpuvisor-srv', 'bin'])):
+    with change_cwd_tmp(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
         subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
 
 
