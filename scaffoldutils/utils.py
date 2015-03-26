@@ -58,3 +58,12 @@ def load_component_paths(base_path):
             component_paths[key] = os.path.normpath(os.path.join(base_path, value))
 
     return component_paths
+
+def copyReplace(src, dst, repl):
+  
+  for line in src:
+    for pat,rep in repl:
+      if pat in line:
+        line = line.replace(pat, rep)
+    dst.write(line)
+  
