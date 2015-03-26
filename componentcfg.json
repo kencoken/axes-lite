@@ -1,0 +1,25 @@
+{
+    "paths": {
+        "cpuvisor-srv": "<PATH>",
+        "limas": "limas",
+        "axes-home": "<PATH>",
+        "collection": "collection",
+        "index": "index",
+        "data": "data/cAXESOpenMini"
+    },
+    "links": {
+        "cpuvisor-srv": {
+            "server_endpoint": "tcp://127.0.0.1:5555",
+            "notify_endpoint": "tcp://127.0.0.1:5556"
+        },
+        "limas": {
+          "collection_name": "cAXESOpen",
+          "cpuvisor_port": "5555",
+          "limas_port": 8081,
+          "collection_url": "http://"
+        },
+        "axes-home": {
+
+        }
+    }
+}
