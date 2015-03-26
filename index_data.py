@@ -41,13 +41,13 @@ def index_cpuvisor(base_path, componentcfg,
     # update config with paths
     log.info('[cpuvisor] Updating config with dataset paths...')
     cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
-                                 'dataset_im_paths',
+                                 'preproc_config.dataset_im_paths',
                                  dataset_im_paths)
     cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
-                                 'dataset_im_base_path',
+                                 'preproc_config.dataset_im_base_path',
                                  dataset_keyframes_path)
     cpuvisortls.set_config_field(componentcfg['paths']['cpuvisor-srv'],
-                                 'dataset_feats_file',
+                                 'preproc_config.dataset_feats_file',
                                  dataset_feats_file)
 
     # compute features for dataset
@@ -70,8 +70,10 @@ if __name__ == "__main__":
 
     # parse input arguments
     parser = argparse.ArgumentParser(description='Generate imagelist from directory')
-    parser.add_argument('dataset', type=str,
-                        help='Root directory to use as base for image search')
+    parser.add_argument('dataset_name', type=str,
+                        help='Name of dataset to index')
+    parser.add_argument('dataset_root_path', type=str,
+                        help='Root directory of dataset in AXES format')
     args = parser.parse_args()
 
     dataset_list = args.dataset.split('=')
@@ -83,7 +85,9 @@ if __name__ == "__main__":
     componentcfg = utils.load_componentcfg(file_dir)
 
     log.info('Indexing cpuvisor-srv component...')
-    prepare_cpuvisor(file_dir, componentcfg)
+    prepare_cpuvisor(file_dir, componentcfg,
+                     args.dataset_name, args.dataset_root_path)
 
     log.info('Indexing limas component...')
-    prepare_limas(file_dir, componentcfg)
+    prepare_limas(file_dir, componentcfg,
+                  args.dataset_name, args.dataset_root_path)

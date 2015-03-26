@@ -1,6 +1,7 @@
 {
     "paths": {
         "cpuvisor-srv": "<PATH>",
+        "imsearch-tools": "<PATH>",
         "limas": "<PATH>",
         "axes-home": "<PATH>"
     },
@@ -8,6 +9,9 @@
         "cpuvisor-srv": {
             "server_endpoint": "tcp://127.0.0.1:5555",
             "notify_endpoint": "tcp://127.0.0.1:5556"
+        },
+        "imsearch-tools": {
+            "server_port": 8157
         },
         "limas": {
 

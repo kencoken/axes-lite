@@ -17,6 +17,9 @@ if not os.path.isdir('cpuvisor-srv'):
     with utils.change_cwd('cpuvisor-srv'):
         subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
 
+if not os.path.isdir('imsearch-tools'):
+    subprocess.call('git clone git@github.com:kencoken/imsearch-tools.git', shell=True)
+
 if not os.path.isdir('limas'):
     subprocess.call('hg clone ssh://hg@bitbucket.org/alyr/limas', shell=True)
 
@@ -28,6 +31,7 @@ if not os.path.isdir('axes-home'):
 default_val = '<PATH>'
 paths = {
     'cpuvisor-srv': 'cpuvisor-srv/',
+    'imsearch-tools': 'imsearch-tools/',
     'limas': 'limas/',
     'axes-home': 'axes-home/'
 }
