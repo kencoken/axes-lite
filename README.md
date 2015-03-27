@@ -25,7 +25,7 @@ First, the following components must be installed:
 
 Following this, a `component_cfgs.json` must be created with the paths of
 each of the components of the system. A template is provided for this purpose
-`component_cfgs.json.tmpl`, in which the location of each of the above
+`component_cfgs.json.template`, in which the location of each of the above
 components should be inserted.
 
 For convenience, a script is provided to undertake these two steps,
