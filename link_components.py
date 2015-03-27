@@ -126,7 +126,7 @@ def prepare_supervisor(base_path, component_cfgs):
          str(links['cpuvisor-srv']['server_port'])),
         # image search
         ('<IMSEARCH-TOOLS>',
-        components['IMSEARCH-TOOLS']),          
+        components['IMSEARCH-TOOLS']),
         ('<IMSEARCH-TOOLS_PORT>',
          str(links['imsearch-tools']['server_port']))
     ]
