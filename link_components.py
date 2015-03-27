@@ -112,6 +112,7 @@ def prepare_limas(base_path, component_cfgs):
 
 def prepare_supervisor(base_path, component_cfgs):
     links = component_cfgs['links']
+    collection = component_cfgs['collection']['name']
     components = component_cfgs['components']
     set_env_replace_patterns = [
         # limas
@@ -119,6 +120,8 @@ def prepare_supervisor(base_path, component_cfgs):
          components['limas']),
         ('<LIMAS_PORT>',
          str(links['limas']['server_port'])),
+        ('<LIMAS_CONF>',
+         os.path.join(components['limas'], 'conf', collection + '.py')),
         # cpu visor
         ('<CPUVISOR-SRV>',
         components['cpuvisor-srv']), 
