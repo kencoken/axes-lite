@@ -24,8 +24,6 @@ with open(utils.COMPONENT_CFGS_FILE_TEMPLATE, 'r') as f:
 for (key, value) in paths.iteritems():
     if key not in component_opts['paths'] or component_opts['paths'][key] == default_val:
         component_opts['paths'][key] = value
-        if not os.path.isdir(value):
-          os.mkdir(value)
 
 dataPaths = {
     'data': 'data/',
