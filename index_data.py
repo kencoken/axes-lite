@@ -29,23 +29,27 @@ def index_cpuvisor(base_path, component_cfgs):
 
     dataset_keyframes_path = os.path.join(collection['paths']['public_data'], 'keyframes')
 
-    dataset_im_paths = os.path.join(collection['paths']['index_data'],
-                                    'cpuvisor-srv',
-                                    'dsetpaths_%s.binaryproto' % collection['name'])
+    dataset_im_paths_file = os.path.join(collection['paths']['index_data'],
+                                         'cpuvisor-srv',
+                                         'dsetpaths_%s.txt' % collection['name'])
     dataset_feats_file = os.path.join(collection['paths']['index_data'],
                                       'cpuvisor-srv',
                                       'dsetfeats_%s.binaryproto' % collection['name'])
 
+    # ensure directories exist
+    ensure_fname_path_exists(dataset_im_paths_file)
+    ensure_fname_path_exists(dataset_feats_file)
+
     # generate filelist for dataset
     log.info('[cpuvisor] Generating dataset filelist...')
-    cpuvisorutil.generate_imagelist(dataset_im_paths, dataset_keyframes_path)
+    cpuvisorutil.generate_imagelist(dataset_im_paths_file, dataset_keyframes_path)
 
 
     # update config with paths
     log.info('[cpuvisor] Updating config with dataset paths...')
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
                                  'preproc_config.dataset_im_paths',
-                                 dataset_im_paths)
+                                 dataset_im_paths_file)
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
                                  'preproc_config.dataset_im_base_path',
                                  dataset_keyframes_path)

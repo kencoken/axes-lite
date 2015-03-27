@@ -48,13 +48,22 @@ def prepare_cpuvisor(base_path, component_cfgs):
 
     models_path = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
 
-    # download neg images
-    log.info('[cpuvisor] Downloading negative training images...')
-    download_neg_images(negimgs_path)
-
     # download models
+
+    param_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
+                                              'caffe_config.param_file')
+    model_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
+                                              'caffe_config.model_file')
+    mean_image_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
+                                                   'caffe_config.mean_image_file')
+
     log.info('[cpuvisor] Downloading models...')
-    download_models(target_dir)
+
+    if (not os.path.exists(param_file) or
+        not os.path.exists(model_file) or
+        not os.path.exists(mean_image_file)):
+
+        download_models(target_dir)
 
     # download / process negative images
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
@@ -70,6 +79,10 @@ def prepare_cpuvisor(base_path, component_cfgs):
                                      negfeats_path)
 
         else:
+            # download neg images
+            log.info('[cpuvisor] Downloading negative training images...')
+            download_neg_images(negimgs_path)
+
             # compute features for negative images
             log.info('[cpuvisor] Computing features for negative images...')
             with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):

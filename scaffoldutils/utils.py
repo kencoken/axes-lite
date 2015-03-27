@@ -68,6 +68,14 @@ def load_component_cfgs(base_path):
     return component_cfgs
 
 
+def ensure_fname_path_exists(fname):
+
+    try:
+        os.makedirs(os.path.dirname(fname))
+    except os.error:
+        pass
+
+
 def copy_replace(src, dst, repl):
 
   for line in src:
