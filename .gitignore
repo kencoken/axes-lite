@@ -1,5 +1,5 @@
 *.pyc
-/component_cfgs.json
+/config.json
 /cpuvisor-srv/
 /limas/
 /axes-home/
