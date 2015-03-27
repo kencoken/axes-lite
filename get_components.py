@@ -38,14 +38,13 @@ for (key, value) in dataPaths.iteritems():
         if not os.path.isdir(value):
           os.mkdir(value)
 
-
-if updated_component_paths:
-    with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
-        json.dump(component_opts, f,
-                  sort_keys=True,
-                  indent=4,
-                  separators=(',', ': '))
-        f.write('\n')
+# write away changes
+with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
+    json.dump(component_opts, f,
+              sort_keys=True,
+              indent=4,
+              separators=(',', ': '))
+    f.write('\n')
 
 # clone components
 
