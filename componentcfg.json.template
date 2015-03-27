@@ -4,26 +4,28 @@
         "imsearch-tools": "<PATH>",
         "limas": "<PATH>",
         "axes-home": "<PATH>",
-        "collection": "<PATH>",
-        "index": "<PATH>",
-        "data": "<PATH>"
+        
     },
     "links": {
         "cpuvisor-srv": {
             "server_endpoint": "tcp://127.0.0.1:5555",
-            "notify_endpoint": "tcp://127.0.0.1:5556",
-            "server_port": 5555
+            "notify_endpoint": "tcp://127.0.0.1:5556"
         },
         "imsearch-tools": {
             "server_port": 8157
         },
         "limas": {
-          "collection_name": "<NAME>",
-          "limas_port": 8081,
-          "collection_url": "<URL>"
+          "collection_name": "cAXESOpen",
+          "server_port": 8081,
+          "collection_url": "http://"
         },
         "axes-home": {
 
         }
+    },
+    "data": {
+      "collection": "<PATH>",
+      "index": "<PATH>",
+      "data": "<PATH>"
     }
 }
