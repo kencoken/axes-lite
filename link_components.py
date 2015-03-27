@@ -140,9 +140,50 @@ def prepare_supervisor(base_path, component_cfgs):
     pass
 
 def prepare_axes_home(base_path, component_cfgs):
-    pass
+    
+    component_paths = component_cfgs['components']
+    links = component_cfgs['links']
+    collection = component_cfgs['collection']
+    templates_dir = 'templates/axes-home/'
 
-
+    log.info('[axes-home] Preparing config...')
+    
+    axes_home_path = component_paths['axes-home']
+    limas_port = links['limas']['server_port']
+    
+    # Combine settings to pass to template generators
+    settings = {
+        'service_url': 'http://localhost:{}/json_rpc'.format(limas_port),
+        'axes_home_path': axes_home_path,
+    }
+    settings.update(links['axes-home'])
+    
+    if settings['mount_point'].endswith('/'):
+        settings['mount_point'] = settings['mount_point'][:-1]
+    
+    def write_template(infile, outfile):
+        with open(templates_dir + infile) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+    
+    def write_server_settings():
+        outf = os.path.join(axes_home_path, 'server', 'settings.cfg') 
+        write_template('settings.cfg', outf)
+            
+    def write_nginx_config():
+        write_template('nginx.conf', 'nginx.conf')
+        
+    def write_start_script():
+        outf = os.path.join(axes_home_path, 'start.sh') 
+        write_template('start.sh', outf)
+    
+    write_server_settings()
+    write_nginx_config()
+    write_start_script()
+    
+    
 
 # main entry point
 # ................

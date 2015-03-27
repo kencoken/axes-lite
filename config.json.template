@@ -25,6 +25,11 @@
             "server_port": 8081
         },
         "axes-home": {
+            "server_port": 8085,
+            "debug": true,
+            "mount_point": "/axes/home",
+            "media_url": "/axes/home/media",
+            "media_path": "<axes-home>/client/media"
             "collection_url": "http://"
         }
     }
