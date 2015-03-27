@@ -29,9 +29,9 @@ for (key, value) in component_paths.iteritems():
         component_opts['components'][key] = value
 
 collection_paths = {
-    'data': 'data/',
-    'index': 'index/',
-    'collection': 'collection/',
+    'public_data': 'public/',
+    'private_data': 'private/',
+    'index_data': 'index/',
 }
 
 for (key, value) in collection_paths.iteritems():

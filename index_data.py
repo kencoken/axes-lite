@@ -104,10 +104,12 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    log.info('Indexing cpuvisor-srv component...')
-    prepare_cpuvisor(file_dir, component_cfgs,
-                     args.dataset_name, args.dataset_root_path)
-
-    log.info('Indexing limas component...')
-    prepare_limas(file_dir, component_cfgs,
-                  args.dataset_name, args.dataset_root_path)
+    if not os.path.isdir(component_opts['components']['cpuvisor-srv']):
+        log.info('Indexing cpuvisor-srv component...')
+        prepare_cpuvisor(file_dir, component_cfgs,
+                         args.dataset_name, args.dataset_root_path)
+                         
+    if not os.path.isdir(component_opts['components']['limas']):
+        log.info('Indexing limas component...')
+        prepare_limas(file_dir, component_cfgs,
+                      args.dataset_name, args.dataset_root_path)

@@ -57,9 +57,13 @@ def load_component_cfgs(base_path):
         component_cfgs = json.load(f)
 
     # convert all component paths to absolute paths
-    for (key, value) in component_cfgs['paths'].iteritems():
+    for (key, value) in component_cfgs['components'].iteritems():
         if not os.path.isabs(value):
-            component_cfgs['paths'][key] = os.path.normpath(os.path.join(base_path, value))
+            component_cfgs['components'][key] = os.path.normpath(os.path.join(base_path, value))
+
+    for (key, value) in component_cfgs['collection']['paths'].iteritems():
+        if not os.path.isabs(value):
+            component_cfgs['collection']['paths'][key] = os.path.normpath(os.path.join(base_path, value))
 
     return component_cfgs
 
