@@ -12,8 +12,7 @@ log = logging.getLogger(__name__)
 logging.basicConfig()
 
 
-def index_cpuvisor(base_path, component_cfgs,
-                   dataset_name, dataset_root_path):
+def index_cpuvisor(base_path, component_cfgs):
 
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
@@ -28,14 +27,14 @@ def index_cpuvisor(base_path, component_cfgs,
     # prepare paths
     log.info('[cpuvisor] Determining dataset paths...')
 
-    dataset_keyframes_path = os.path.join(dataset_root_path, 'keyframes')
+    dataset_keyframes_path = os.path.join(collection['paths']['public_data'], 'keyframes')
 
-    dataset_im_paths = os.path.join(component_paths['cpuvisor-srv'],
-                                    'server_data',
-                                    'dsetpaths_%s.binaryproto' % dataset_name)
-    dataset_feats_file = os.path.join(component_paths['cpuvisor-srv'],
-                                      'server_data',
-                                      'dsetfeats_%s.binaryproto' % dataset_name)
+    dataset_im_paths = os.path.join(collection['paths']['index_data'],
+                                    'cpuvisor-srv',
+                                    'dsetpaths_%s.binaryproto' % collection['name'])
+    dataset_feats_file = os.path.join(collection['paths']['index_data'],
+                                      'cpuvisor-srv',
+                                      'dsetfeats_%s.binaryproto' % collection['name'])
 
     # generate filelist for dataset
     log.info('[cpuvisor] Generating dataset filelist...')
@@ -60,48 +59,40 @@ def index_cpuvisor(base_path, component_cfgs,
         subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
 
 
-def index_limas(base_path, component_cfgs,
-                dataset_name, dataset_root_path):
+def index_limas(base_path, component_cfgs):
+
     components = component_cfgs['components']
     links = component_cfgs['links']
     data = component_cfgs['collection']['paths']
     collection = component_cfgs['collection']['name']
+
     conf_fn = os.path.join(components['limas'], 'conf', collection + '.py')
-    os.environ['PATH'] = os.environ['PATH'] + ":" + 
+
+    os.environ['PATH'] = os.environ['PATH'] + ":" +
                          os.path.join( components['limas'], 'bin')
+
     with utils.change_cwd(component_cfgs['paths']['limas']):
         # index main video files
-        subprocess.call( ["scripts/shotdetection/index_videos.py ", 
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'ffprobe')
-                         ] )
+        subprocess.call(["scripts/shotdetection/index_videos.py ",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'ffprobe')])
         # index video-level metatada
-        subprocess.call( ["scripts/integration/index_meta.py", 
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'metadata')
-                         ] )
+        subprocess.call(["scripts/integration/index_meta.py",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'metadata')])
         # index shot and keyframe data
-        subprocess.call( ["scripts/shotdetection/index_shots_tec.py",
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'keyframes')
-                         ] )
+        subprocess.call(["scripts/shotdetection/index_shots_tec.py",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'keyframes')])
 
 
 # main entry point
 # ................
 
 if __name__ == "__main__":
-
-    # parse input arguments
-    parser = argparse.ArgumentParser(description='Generate imagelist from directory')
-    parser.add_argument('dataset_name', type=str,
-                        help='Name of dataset to index')
-    parser.add_argument('dataset_root_path', type=str,
-                        help='Root directory of dataset in AXES format')
-    args = parser.parse_args()
 
     dataset_list = args.dataset.split('=')
     dataset = {}
@@ -111,12 +102,12 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    if os.path.isdir(component_opts['components']['cpuvisor-srv']):
+    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
         log.info('Indexing cpuvisor-srv component...')
         prepare_cpuvisor(file_dir, component_cfgs,
                          args.dataset_name, args.dataset_root_path)
-                         
-    if os.path.isdir(component_opts['components']['limas']):
+
+    if os.path.isdir(component_cfgs['components']['limas']):
         log.info('Indexing limas component...')
         prepare_limas(file_dir, component_cfgs,
                       args.dataset_name, args.dataset_root_path)

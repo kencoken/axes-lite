@@ -39,34 +39,41 @@ def prepare_cpuvisor(base_path, component_cfgs):
                                  'server_config.notify_endpoint',
                                  links['cpuvisor-srv']['notify_endpoint'])
 
+    # prepare paths
+    negimgs_path = os.path.join(component_paths['cpuvisor-srv'],
+                                'server_data', 'neg_images')
+
+    negfeats_path = os.path.join(component_paths['cpuvisor-srv'],
+                                 'server_data', 'negfeats.binaryproto')
+
+    models_path = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
+
     # download neg images
     log.info('[cpuvisor] Downloading negative training images...')
-    target_dir = os.path.join(component_paths['cpuvisor-srv'], 'server_data', 'neg_images')
-    download_neg_images(target_dir)
+    download_neg_images(negimgs_path)
 
     # download models
     log.info('[cpuvisor] Downloading models...')
-    target_dir = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
     download_models(target_dir)
 
-    if CPUVISOR_DOWNLOAD_NEG_FEATS_URL:
-        # download features for negative images
-        log.info('[cpuvisor] Dowloading features for negative images...')
-        negfeats_path = os.path.join(component_paths['cpuvisor-srv'],
-                                     'server_data', 'negfeats.binaryproto')
-
-        cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
-                                     'preproc_config.neg_feats_file',
-                                     negfeats_path)
-
-        cpuvisortls.download_url(CPUVISOR_DOWNLOAD_NEG_FEATS_URL,
+    # download / process negative images
+    cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
+                                 'preproc_config.neg_feats_file',
                                  negfeats_path)
 
-    else:
-        # compute features for negative images
-        log.info('[cpuvisor] Computing features for negative images...')
-        with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-            subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
+    if not os.path.exists(negfeats_path):
+        if CPUVISOR_DOWNLOAD_NEG_FEATS_URL:
+            # download features for negative images
+            log.info('[cpuvisor] Dowloading features for negative images...')
+
+            cpuvisortls.download_url(CPUVISOR_DOWNLOAD_NEG_FEATS_URL,
+                                     negfeats_path)
+
+        else:
+            # compute features for negative images
+            log.info('[cpuvisor] Computing features for negative images...')
+            with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+                subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
 
 def prepare_limas(base_path, component_cfgs):
@@ -99,7 +106,7 @@ def prepare_limas(base_path, component_cfgs):
             ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>',
              collection['paths']['public_data']),
             ('<PATH_TO_INDEX_STRUCTURES>',
-             collection['paths']['index_data']),
+             os.path.join(collection['paths']['index_data'], 'limas')),
             ('<CPUVISOR_PORT>',
              links['cpuvisor-srv']['server_port']),
             ('<URL_TO_COLLECTION_PATH>',
@@ -110,10 +117,13 @@ def prepare_limas(base_path, component_cfgs):
             with open('conf/' + collection['name'] + '.py', 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
+
 def prepare_supervisor(base_path, component_cfgs):
+
     links = component_cfgs['links']
     collection = component_cfgs['collection']['name']
     components = component_cfgs['components']
+
     set_env_replace_patterns = [
         # limas
         ('<LIMAS>',
@@ -124,7 +134,7 @@ def prepare_supervisor(base_path, component_cfgs):
          os.path.join(components['limas'], 'conf', collection + '.py')),
         # cpu visor
         ('<CPUVISOR-SRV>',
-        components['cpuvisor-srv']), 
+        components['cpuvisor-srv']),
         ('<CPUVISOR-SRV_PORT>',
          str(links['cpuvisor-srv']['server_port'])),
         # image search
@@ -137,7 +147,7 @@ def prepare_supervisor(base_path, component_cfgs):
     with open('supervisor.conf.template', 'r') as src_f:
         with open('supervisor.conf', 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
-    pass
+
 
 def prepare_axes_home(base_path, component_cfgs):
     
@@ -204,6 +214,6 @@ if __name__ == "__main__":
     if os.path.isdir(component_cfgs['components']['axes-home']):
         log.info('Preparing axes-home component...')
         prepare_axes_home(file_dir, component_cfgs)
-        
+
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)
