@@ -58,9 +58,25 @@ def index_cpuvisor(base_path, component_cfgs,
 
 def index_limas(base_path, component_cfgs,
                 dataset_name, dataset_root_path):
-    pass
+    paths = component_cfgs['paths']
+    links = component_cfgs['links']
+    data = component_cfgs['data']
+    collection = links['limas']['collection_name']
+    conf_fn = os.path.join(paths['limas'], 'conf', collection + '.py')
+    with utils.change_cwd(component_cfgs['paths']['limas']):
+        # index main videos
+        subprocess.call( ["scripts/shotdetection/index_videos.py ", 
+                          conf_fn, 
+                          collection, 
+                          os.path.join(data['data'], 'ffprobe')
+                         ] )
+                         
 
-
+        subprocess.call( ["scripts/integration/index_meta.py", 
+                          conf_fn, 
+                          collection, 
+                          os.path.join(data['data'], 'metadata')
+                         ] )
 
 
 # main entry point
