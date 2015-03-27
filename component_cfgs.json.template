@@ -7,24 +7,23 @@
     },
     "links": {
         "cpuvisor-srv": {
-            "server_endpoint": "tcp://127.0.0.1:5555",
-            "notify_endpoint": "tcp://127.0.0.1:5556"
+            "server_port": 5555,
+            "notify_port": 5556
         },
         "imsearch-tools": {
             "server_port": 8157
         },
         "limas": {
-          "collection_name": "cAXESOpen",
-          "server_port": 8081,
-          "collection_url": "http://"
+            "server_port": 8081
         },
         "axes-home": {
-
+            "collection_url": "http://"
         }
     },
     "data": {
-      "collection": "<PATH>",
-      "index": "<PATH>",
-      "data": "<PATH>"
+        "collection_name": "cAXESOpen",
+        "collection_path": "<PATH>",
+        "index": "<PATH>",
+        "data": "<PATH>"
     }
 }

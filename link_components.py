@@ -5,7 +5,6 @@
 import os
 import subprocess
 import shutil
-import re
 from scaffoldutils import utils
 
 import logging
@@ -21,35 +20,42 @@ def prepare_cpuvisor(base_path, component_cfgs):
     cpuvisortls = utils.import_python_module_from_path(component_cfgs['paths']['cpuvisor-srv'],
                                                        'download_data')
 
+    paths = component_cfgs['paths']
+    links = component_cfgs['links']
+    data = component_cfgs['data']
+
     # prepare config
     log.info('[cpuvisor] Preparing config...')
-    cpuvisortls.prepare_config_proto(component_cfgs['paths']['cpuvisor-srv'])
+    cpuvisortls.prepare_config_proto(paths['cpuvisor-srv'])
 
     # set endpoints
-    cpuvisortls.set_config_field(component_cfgs['paths']['cpuvisor-srv'],
+    server_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['server_port']
+    notify_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['notify_port']
+
+    cpuvisortls.set_config_field(paths['cpuvisor-srv'],
                                  'server_config.server_endpoint',
-                                 component_cfgs['links']['cpuvisor-srv']['server_endpoint'])
-    cpuvisortls.set_config_field(component_cfgs['paths']['cpuvisor-srv'],
+                                 links['cpuvisor-srv']['server_endpoint'])
+    cpuvisortls.set_config_field(paths['cpuvisor-srv'],
                                  'server_config.notify_endpoint',
-                                 component_cfgs['links']['cpuvisor-srv']['notify_endpoint'])
+                                 links['cpuvisor-srv']['notify_endpoint'])
 
     # download neg images
     log.info('[cpuvisor] Downloading negative training images...')
-    target_dir = os.path.join(component_cfgs['paths']['cpuvisor-srv'], 'server_data', 'neg_images')
+    target_dir = os.path.join(paths['cpuvisor-srv'], 'server_data', 'neg_images')
     download_neg_images(target_dir)
 
     # download models
     log.info('[cpuvisor] Downloading models...')
-    target_dir = os.path.join(component_cfgs['paths']['cpuvisor-srv'], 'model_data')
+    target_dir = os.path.join(paths['cpuvisor-srv'], 'model_data')
     download_models(target_dir)
 
     if CPUVISOR_DOWNLOAD_NEG_FEATS_URL:
         # download features for negative images
         log.info('[cpuvisor] Dowloading features for negative images...')
-        negfeats_path = os.path.join(component_cfgs['paths']['cpuvisor-srv'],
+        negfeats_path = os.path.join(paths['cpuvisor-srv'],
                                      'server_data', 'negfeats.binaryproto')
 
-        cpuvisortls.set_config_field(component_cfgs['paths']['cpuvisor-srv'],
+        cpuvisortls.set_config_field(paths['cpuvisor-srv'],
                                      'preproc_config.neg_feats_file',
                                      negfeats_path)
 
@@ -59,24 +65,24 @@ def prepare_cpuvisor(base_path, component_cfgs):
     else:
         # compute features for negative images
         log.info('[cpuvisor] Computing features for negative images...')
-        with utils.change_cwd(os.path.join(component_cfgs['paths']['cpuvisor-srv'], 'bin')):
+        with utils.change_cwd(os.path.join(paths['cpuvisor-srv'], 'bin')):
             subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
 
 def prepare_limas(base_path, component_cfgs):
 
-    log.info('[limas] Preparing config...')
-
     paths = component_cfgs['paths']
     links = component_cfgs['links']
     data = component_cfgs['data']
+
+    log.info('[limas] Preparing config...')
 
     with utils.change_cwd(paths['limas']):
         set_env_replace_patterns = [
             ('<directory to limas>',
              paths['limas']),
             ('<name of the collection that this instance should host>',
-             links['limas']['collection_name']),
+             data['collection_name']),
             ('<port under which the instance should run>',
              str(links['limas']['server_port'])),
             ('<directory to external data>',
@@ -89,19 +95,19 @@ def prepare_limas(base_path, component_cfgs):
 
         conf_replace_patterns = [
             ('<COLLECTION_NAME>',
-             links['limas']['collection_name']),
+             data['collection_name']),
             ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>',
-             data['collection']),
+             data['collection_path']),
             ('<PATH_TO_INDEX_STRUCTURES>',
              data['index']),
             ('<CPUVISOR_PORT>',
-             re.search(':([0-9]+)$', links['cpuvisor-srv']['server_endpoint']).group(1)),
+             links['cpuvisor-srv']['server_port']),
             ('<URL_TO_COLLECTION_PATH>',
-             links['limas']['collection_url'])
+             links['axes-home']['collection_url'])
         ]
 
         with open('conf/conf-template.py', 'r') as src_f:
-            with open('conf/' + links['limas']['collection_name'] + '.py', 'w') as dst_f:
+            with open('conf/' + data['collection_name'] + '.py', 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
 
