@@ -23,4 +23,3 @@ directory=<LIMAS>
 command=python imsearch_http_service.py <IMSEARCH-TOOLS_PORT>
 autostart=true
 directory=<IMSEARCH-TOOLS>
-

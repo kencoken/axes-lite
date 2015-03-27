@@ -12,8 +12,7 @@ log = logging.getLogger(__name__)
 logging.basicConfig()
 
 
-def index_cpuvisor(base_path, component_cfgs,
-                   dataset_name, dataset_root_path):
+def index_cpuvisor(base_path, component_cfgs):
 
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
@@ -28,14 +27,14 @@ def index_cpuvisor(base_path, component_cfgs,
     # prepare paths
     log.info('[cpuvisor] Determining dataset paths...')
 
-    dataset_keyframes_path = os.path.join(dataset_root_path, 'keyframes')
+    dataset_keyframes_path = os.path.join(collection['paths']['public_data'], 'keyframes')
 
-    dataset_im_paths = os.path.join(component_paths['cpuvisor-srv'],
-                                    'server_data',
-                                    'dsetpaths_%s.binaryproto' % dataset_name)
-    dataset_feats_file = os.path.join(component_paths['cpuvisor-srv'],
-                                      'server_data',
-                                      'dsetfeats_%s.binaryproto' % dataset_name)
+    dataset_im_paths = os.path.join(collection['paths']['index_data'],
+                                    'cpuvisor-srv',
+                                    'dsetpaths_%s.binaryproto' % collection['name'])
+    dataset_feats_file = os.path.join(collection['paths']['index_data'],
+                                      'cpuvisor-srv',
+                                      'dsetfeats_%s.binaryproto' % collection['name'])
 
     # generate filelist for dataset
     log.info('[cpuvisor] Generating dataset filelist...')
@@ -60,8 +59,7 @@ def index_cpuvisor(base_path, component_cfgs,
         subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
 
 
-def index_limas(base_path, component_cfgs,
-                dataset_name, dataset_root_path):
+def index_limas(base_path, component_cfgs):
 
     components = component_cfgs['components']
     links = component_cfgs['links']
@@ -95,14 +93,6 @@ def index_limas(base_path, component_cfgs,
 # ................
 
 if __name__ == "__main__":
-
-    # parse input arguments
-    parser = argparse.ArgumentParser(description='Generate imagelist from directory')
-    parser.add_argument('dataset_name', type=str,
-                        help='Name of dataset to index')
-    parser.add_argument('dataset_root_path', type=str,
-                        help='Root directory of dataset in AXES format')
-    args = parser.parse_args()
 
     dataset_list = args.dataset.split('=')
     dataset = {}
