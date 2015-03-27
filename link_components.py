@@ -110,6 +110,31 @@ def prepare_limas(base_path, component_cfgs):
             with open('conf/' + collection['name'] + '.py', 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
+def prepare_supervisor(base_path, component_cfgs):
+    links = component_cfgs['links']
+    components = component_cfgs['components']
+    set_env_replace_patterns = [
+        # limas
+        ('<LIMAS>',
+         components['limas']),
+        ('<LIMAS_PORT>',
+         str(links['limas']['server_port'])),
+        # cpu visor
+        ('<CPUVISOR-SRV>',
+        components['cpuvisor-srv']), 
+        ('<CPUVISOR-SRV_PORT>',
+         str(links['cpuvisor-srv']['server_port'])),
+        # image search
+        ('<IMSEARCH-TOOLS>',
+        components['IMSEARCH-TOOLS']),          
+        ('<IMSEARCH-TOOLS_PORT>',
+         str(links['imsearch-tools']['server_port']))
+    ]
+
+    with open('supervisor.conf.template', 'r') as src_f:
+        with open('supervisor.conf', 'w') as dst_f:
+            utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
+    pass
 
 def prepare_axes_home(base_path, component_cfgs):
     pass

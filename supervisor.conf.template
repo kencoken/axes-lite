@@ -1,0 +1,26 @@
+[supervisord]
+logfile=supervisor.log ; (main log file;default $CWD/supervisord.log)
+pidfile=supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+childlogdir=logs ; ('AUTO' child log dir, default $TEMP)
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///var/run/supervisor.sock ; use a unix:// URL  for a unix socket
+
+[program:cpuvisor-srv]
+command=
+autostart=true
+directory=<CPUVISOR-SRV>/bin
+
+[program:limas]
+command=bin/limas webstart <LIMAS_PORT> <LIMAS_CONF>
+autostart=true
+directory=<LIMAS>
+
+[program:imsearch-tools]
+command=python imsearch_http_service.py <IMSEARCH-TOOLS_PORT>
+autostart=true
+directory=<IMSEARCH-TOOLS>
+

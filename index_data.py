@@ -62,24 +62,31 @@ def index_cpuvisor(base_path, component_cfgs,
 
 def index_limas(base_path, component_cfgs,
                 dataset_name, dataset_root_path):
-    paths = component_cfgs['paths']
+    components = component_cfgs['components']
     links = component_cfgs['links']
-    data = component_cfgs['data']
-    collection = links['limas']['collection_name']
-    conf_fn = os.path.join(paths['limas'], 'conf', collection + '.py')
+    data = component_cfgs['collection']['paths']
+    collection = component_cfgs['collection']['name']
+    conf_fn = os.path.join(components['limas'], 'conf', collection + '.py')
+    os.environ['PATH'] = os.environ['PATH'] + ":" + 
+                         os.path.join( components['limas'], 'bin')
     with utils.change_cwd(component_cfgs['paths']['limas']):
-        # index main videos
+        # index main video files
         subprocess.call( ["scripts/shotdetection/index_videos.py ", 
                           conf_fn, 
                           collection, 
-                          os.path.join(data['data'], 'ffprobe')
+                          os.path.join(data['private_data'], 'ffprobe')
                          ] )
-                         
-
+        # index video-level metatada
         subprocess.call( ["scripts/integration/index_meta.py", 
                           conf_fn, 
                           collection, 
-                          os.path.join(data['data'], 'metadata')
+                          os.path.join(data['private_data'], 'metadata')
+                         ] )
+        # index shot and keyframe data
+        subprocess.call( ["scripts/shotdetection/index_shots_tec.py",
+                          conf_fn, 
+                          collection, 
+                          os.path.join(data['private_data'], 'keyframes')
                          ] )
 
 
@@ -104,12 +111,12 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    if not os.path.isdir(component_opts['components']['cpuvisor-srv']):
+    if os.path.isdir(component_opts['components']['cpuvisor-srv']):
         log.info('Indexing cpuvisor-srv component...')
         prepare_cpuvisor(file_dir, component_cfgs,
                          args.dataset_name, args.dataset_root_path)
                          
-    if not os.path.isdir(component_opts['components']['limas']):
+    if os.path.isdir(component_opts['components']['limas']):
         log.info('Indexing limas component...')
         prepare_limas(file_dir, component_cfgs,
                       args.dataset_name, args.dataset_root_path)
