@@ -11,7 +11,7 @@ from scaffoldutils import utils
 # update component_paths.json with paths if is default value
 
 default_val = '<PATH>'
-paths = {
+component_paths = {
     'cpuvisor-srv': 'cpuvisor-srv/',
     'imsearch-tools': 'imsearch-tools/',
     'limas': 'limas/',
@@ -21,19 +21,26 @@ paths = {
 with open(utils.COMPONENT_CFGS_FILE_TEMPLATE, 'r') as f:
     component_opts = json.load(f)
 
-for (key, value) in paths.iteritems():
-    if key not in component_opts['paths'] or component_opts['paths'][key] == default_val:
-        component_opts['paths'][key] = value
+for (key, value) in component_paths.iteritems():
 
-data_paths = {
+    if (key not in component_opts['components']
+        or component_opts['components'][key] == default_val):
+
+        component_opts['components'][key] = value
+
+collection_paths = {
     'data': 'data/',
     'index': 'index/',
     'collection': 'collection/',
 }
 
-for (key, value) in data_paths.iteritems():
-    if key not in component_opts['data'] or component_opts['data'][key] == default_val:
-        component_opts['data'][key] = value
+for (key, value) in collection_paths.iteritems():
+
+    if (key not in component_opts['collection']['paths']
+        or component_opts['collection']['paths'][key] == default_val):
+
+        component_opts['collection']['paths'][key] = value
+
         if not os.path.isdir(value):
           os.mkdir(value)
 
@@ -50,20 +57,20 @@ with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
 
 # TODO: should download a specific tag
 
-if not os.path.isdir(component_opts['paths']['cpuvisor-srv']):
+if not os.path.isdir(component_opts['components']['cpuvisor-srv']):
     subprocess.call(['git clone git@github.com:kencoken/cpuvisor-srv.git',
-                     component_opts['paths']['cpuvisor-srv']], shell=True)
+                     component_opts['components']['cpuvisor-srv']], shell=True)
     with utils.change_cwd('cpuvisor-srv'):
         subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
 
-if not os.path.isdir(component_opts['paths']['imsearch-tools']):
+if not os.path.isdir(component_opts['components']['imsearch-tools']):
     subprocess.call(['git clone git@github.com:kencoken/imsearch-tools.git',
-                     component_opts['paths']['imsearch-tools']], shell=True)
+                     component_opts['components']['imsearch-tools']], shell=True)
 
-if not os.path.isdir(component_opts['paths']['limas']):
+if not os.path.isdir(component_opts['components']['limas']):
     subprocess.call(['hg clone ssh://hg@bitbucket.org/alyr/limas',
-                     component_opts['paths']['limas']], shell=True)
+                     component_opts['components']['limas']], shell=True)
 
-if not os.path.isdir(component_opts['paths']['axes-home']):
+if not os.path.isdir(component_opts['components']['axes-home']):
     subprocess.call(['git clone git@bitbucket.org:kevinmcguinness/axes-home.git',
-                     component_opts['paths']['axes-home']], shell=True)
+                     component_opts['components']['axes-home']], shell=True)

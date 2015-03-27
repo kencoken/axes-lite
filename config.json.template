@@ -1,9 +1,17 @@
 {
-    "paths": {
+    "components": {
         "cpuvisor-srv": "<PATH>",
         "imsearch-tools": "<PATH>",
         "limas": "<PATH>",
         "axes-home": "<PATH>"
+    },
+    "collection": {
+        "name": "cAXESOpen",
+        "paths": {
+            "public_data": "<PATH>",
+            "private_data": "<PATH>",
+            "index_data": "<PATH>"
+        }
     },
     "links": {
         "cpuvisor-srv": {
@@ -19,11 +27,5 @@
         "axes-home": {
             "collection_url": "http://"
         }
-    },
-    "data": {
-        "collection_name": "cAXESOpen",
-        "collection_path": "<PATH>",
-        "index": "<PATH>",
-        "data": "<PATH>"
     }
 }

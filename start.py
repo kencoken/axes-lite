@@ -12,17 +12,17 @@ logging.basicConfig()
 
 
 def start_cpuvisor(base_path, component_cfgs):
-    with utils.change_cwd(os.path.join(component_cfgs['paths']['cpuvisor-srv'], 'utils')):
+    with utils.change_cwd(os.path.join(component_cfgs['components']['cpuvisor-srv'], 'utils')):
         subprocess.call('./start_service.sh', shell=True)
 
 
 def stop_cpuvisor(base_path, component_cfgs):
-    with utils.change_cwd(os.path.join(component_cfgs['paths']['cpuvisor-srv'], 'utils')):
+    with utils.change_cwd(os.path.join(component_cfgs['components']['cpuvisor-srv'], 'utils')):
         subprocess.call('./stop_service.sh', shell=True)
 
 
 def start_imsearch_tools(base_path, component_cfgs):
-    with utils.change_cwd(os.path.join(component_cfgs['paths']['imsearch-tools'], 'utils')):
+    with utils.change_cwd(os.path.join(component_cfgs['components']['imsearch-tools'], 'utils')):
         subprocess.call(['./start_server.sh', component_cfgs['links']['imsearch-tools']['server_port']],
                         shell=True)
 
@@ -39,7 +39,7 @@ def start_axes_home(base_path, component_cfgs):
 
 if __name__ == "__main__":
 
-    log.info('Loading component paths...')
+    log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 

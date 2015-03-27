@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 logging.basicConfig()
 
 
-COMPONENT_CFGS_FILE = 'component_cfgs.json'
-COMPONENT_CFGS_FILE_TEMPLATE = 'component_cfgs.json.template'
+COMPONENT_CFGS_FILE = 'config.json'
+COMPONENT_CFGS_FILE_TEMPLATE = 'config.json.template'
 
 
 def import_python_module_from_path(path, module_name):
