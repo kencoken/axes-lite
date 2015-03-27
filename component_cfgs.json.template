@@ -3,8 +3,7 @@
         "cpuvisor-srv": "<PATH>",
         "imsearch-tools": "<PATH>",
         "limas": "<PATH>",
-        "axes-home": "<PATH>",
-        
+        "axes-home": "<PATH>"
     },
     "links": {
         "cpuvisor-srv": {
