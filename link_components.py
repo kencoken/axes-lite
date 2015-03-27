@@ -160,3 +160,6 @@ if __name__ == "__main__":
     if os.path.isdir(component_cfgs['components']['axes-home']):
         log.info('Preparing axes-home component...')
         prepare_axes_home(file_dir, component_cfgs)
+        
+    log.info('Preparing supervisor configuration...')
+    prepare_supervisor(file_dir, component_cfgs)
