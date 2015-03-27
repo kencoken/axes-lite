@@ -110,10 +110,13 @@ def prepare_limas(base_path, component_cfgs):
             with open('conf/' + collection['name'] + '.py', 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
+
 def prepare_supervisor(base_path, component_cfgs):
+
     links = component_cfgs['links']
     collection = component_cfgs['collection']['name']
     components = component_cfgs['components']
+
     set_env_replace_patterns = [
         # limas
         ('<LIMAS>',
@@ -124,7 +127,7 @@ def prepare_supervisor(base_path, component_cfgs):
          os.path.join(components['limas'], 'conf', collection + '.py')),
         # cpu visor
         ('<CPUVISOR-SRV>',
-        components['cpuvisor-srv']), 
+        components['cpuvisor-srv']),
         ('<CPUVISOR-SRV_PORT>',
          str(links['cpuvisor-srv']['server_port'])),
         # image search
@@ -137,7 +140,7 @@ def prepare_supervisor(base_path, component_cfgs):
     with open('supervisor.conf.template', 'r') as src_f:
         with open('supervisor.conf', 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
-    pass
+
 
 def prepare_axes_home(base_path, component_cfgs):
     pass
@@ -163,6 +166,6 @@ if __name__ == "__main__":
     if os.path.isdir(component_cfgs['components']['axes-home']):
         log.info('Preparing axes-home component...')
         prepare_axes_home(file_dir, component_cfgs)
-        
+
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)

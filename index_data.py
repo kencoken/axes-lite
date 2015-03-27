@@ -62,32 +62,33 @@ def index_cpuvisor(base_path, component_cfgs,
 
 def index_limas(base_path, component_cfgs,
                 dataset_name, dataset_root_path):
+
     components = component_cfgs['components']
     links = component_cfgs['links']
     data = component_cfgs['collection']['paths']
     collection = component_cfgs['collection']['name']
+
     conf_fn = os.path.join(components['limas'], 'conf', collection + '.py')
-    os.environ['PATH'] = os.environ['PATH'] + ":" + 
+
+    os.environ['PATH'] = os.environ['PATH'] + ":" +
                          os.path.join( components['limas'], 'bin')
+
     with utils.change_cwd(component_cfgs['paths']['limas']):
         # index main video files
-        subprocess.call( ["scripts/shotdetection/index_videos.py ", 
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'ffprobe')
-                         ] )
+        subprocess.call(["scripts/shotdetection/index_videos.py ",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'ffprobe')])
         # index video-level metatada
-        subprocess.call( ["scripts/integration/index_meta.py", 
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'metadata')
-                         ] )
+        subprocess.call(["scripts/integration/index_meta.py",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'metadata')])
         # index shot and keyframe data
-        subprocess.call( ["scripts/shotdetection/index_shots_tec.py",
-                          conf_fn, 
-                          collection, 
-                          os.path.join(data['private_data'], 'keyframes')
-                         ] )
+        subprocess.call(["scripts/shotdetection/index_shots_tec.py",
+                         conf_fn,
+                         collection,
+                         os.path.join(data['private_data'], 'keyframes')])
 
 
 # main entry point
