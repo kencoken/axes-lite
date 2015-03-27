@@ -95,7 +95,7 @@ def prepare_limas(base_path, component_cfgs):
             ('<PATH_TO_INDEX_STRUCTURES>',
              data['index']),
             ('<CPUVISOR_PORT>',
-             re.search(':([0-9]+)', links['cpuvisor-srv']['server_endpoint']).group(1)),
+             re.search(':([0-9]+)$', links['cpuvisor-srv']['server_endpoint']).group(1)),
             ('<URL_TO_COLLECTION_PATH>',
              links['limas']['collection_url'])
         ]
