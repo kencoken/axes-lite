@@ -12,81 +12,73 @@ log = logging.getLogger(__name__)
 logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
-CPUVISOR_DOWNLOAD_NEG_FEATS_URL = ""
-
-
 def prepare_cpuvisor(base_path, component_cfgs):
 
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
+    index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
+    templates_dir = 'templates/cpu-visor/'
 
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
 
-    # prepare config
-    log.info('[cpuvisor] Preparing config...')
-    cpuvisortls.prepare_config_proto(component_paths['cpuvisor-srv'])
+    # prepare endpoints and paths
 
-    # set endpoints
-    server_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['server_port']
-    notify_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['notify_port']
+    models_path = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
 
-    cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
-                                 'server_config.server_endpoint',
-                                 links['cpuvisor-srv']['server_endpoint'])
-    cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
-                                 'server_config.notify_endpoint',
-                                 links['cpuvisor-srv']['notify_endpoint'])
-
-    # prepare paths
     negimgs_path = os.path.join(component_paths['cpuvisor-srv'],
                                 'server_data', 'neg_images')
+    negidx_path = os.path.join(component_paths['cpuvisor-srv'],
+                                'server_data', 'negpaths.txt')
 
     negfeats_path = os.path.join(component_paths['cpuvisor-srv'],
                                  'server_data', 'negfeats.binaryproto')
 
-    models_path = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
+    server_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['server_port']
+    notify_endpoint = 'tcp://127.0.0.1:%d' % links['cpuvisor-srv']['notify_port']
+
+    image_cache_path = os.path.join(index_dir, 'cache', 'downloaded')
+    rlist_cache_path = os.path.join(index_dir, 'cache', 'rlists')
+
+    # prepare config
+    log.info('[cpuvisor] Preparing config...')
+
+    template_config = os.path.join(templates_dir, 'config.prototxt')
+    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.prototxt')
+
+    replace_patterns = {
+        '<MODELS_PATH>': models_path,
+        '<NEG_IM_PATH>': negimgs_path,
+        '<NEG_IM_INDEX>': negidx_path,
+        '<NEG_FEATS_FILE>': negfeats_path,
+        '<SERVER_ENDPOINT>': server_endpoint,
+        '<NOTIFY_ENDPOINT>': notify_endpoint,
+        '<IMAGE_CACHE_PATH>': image_cache_path,
+        '<RLIST_CACHE_PATH>': rlist_cache_path
+    }
+
+    with open(template_config, 'r') as src_f:
+        with open(output_config, 'w') as dst_f:
+            utils.copy_replace(src_f, dst_f, replace_patterns)
 
     # download models
 
-    param_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
-                                              'caffe_config.param_file')
-    model_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
-                                              'caffe_config.model_file')
-    mean_image_file = cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
-                                                   'caffe_config.mean_image_file')
-
     log.info('[cpuvisor] Downloading models...')
+    download_models(target_dir)
 
-    if (not os.path.exists(param_file) or
-        not os.path.exists(model_file) or
-        not os.path.exists(mean_image_file)):
+    # download features for negative images
 
-        download_models(target_dir)
+    log.info('[cpuvisor] Attempting to download features for negative images...')
+    if not cpuvisortls.download_neg_feats(negfeats_path):
 
-    # download / process negative images
-    cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
-                                 'preproc_config.neg_feats_file',
-                                 negfeats_path)
+        # if no features could be downloaded, compute features using negative images instead
+        log.info('[cpuvisor] Could not download negative features - downloading negative training images instead...')
+        cpuvisortls.download_neg_images(negimgs_path)
 
-    if not os.path.exists(negfeats_path):
-        if CPUVISOR_DOWNLOAD_NEG_FEATS_URL:
-            # download features for negative images
-            log.info('[cpuvisor] Dowloading features for negative images...')
-
-            cpuvisortls.download_url(CPUVISOR_DOWNLOAD_NEG_FEATS_URL,
-                                     negfeats_path)
-
-        else:
-            # download neg images
-            log.info('[cpuvisor] Downloading negative training images...')
-            download_neg_images(negimgs_path)
-
-            # compute features for negative images
-            log.info('[cpuvisor] Computing features for negative images...')
-            with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-                subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
+        log.info('[cpuvisor] Computing features for negative images...')
+        with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+            subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
 
 def prepare_limas(base_path, component_cfgs):
@@ -163,50 +155,49 @@ def prepare_supervisor(base_path, component_cfgs):
 
 
 def prepare_axes_home(base_path, component_cfgs):
-    
+
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
     templates_dir = 'templates/axes-home/'
 
     log.info('[axes-home] Preparing config...')
-    
+
     axes_home_path = component_paths['axes-home']
     limas_port = links['limas']['server_port']
-    
+
     # Combine settings to pass to template generators
     settings = {
         'service_url': 'http://localhost:{}/json_rpc'.format(limas_port),
         'axes_home_path': axes_home_path,
     }
     settings.update(links['axes-home'])
-    
+
     if settings['mount_point'].endswith('/'):
         settings['mount_point'] = settings['mount_point'][:-1]
-    
+
     def write_template(infile, outfile):
         with open(templates_dir + infile) as f:
             template = f.read()
         text = template.format(**settings)
         with open(outfile, 'w') as f:
             f.write(text)
-    
+
     def write_server_settings():
-        outf = os.path.join(axes_home_path, 'server', 'settings.cfg') 
+        outf = os.path.join(axes_home_path, 'server', 'settings.cfg')
         write_template('settings.cfg', outf)
-            
+
     def write_nginx_config():
         write_template('nginx.conf', 'nginx.conf')
-        
+
     def write_start_script():
-        outf = os.path.join(axes_home_path, 'start.sh') 
+        outf = os.path.join(axes_home_path, 'start.sh')
         write_template('start.sh', outf)
-    
+
     write_server_settings()
     write_nginx_config()
     write_start_script()
-    
-    
+
 
 # main entry point
 # ................

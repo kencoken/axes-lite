@@ -1,0 +1,27 @@
+caffe_config: {
+  param_file: "<MODELS_PATH>/VGG_CNN_M_128_deploy.prototxt"
+  model_file: "<MODELS_PATH>/VGG_CNN_M_128.caffemodel"
+  mean_image_file: "<MODELS_PATH>/VGG_mean.binaryproto"
+  data_aug_type: DAT_ASPECT_CORNERS
+  mode: CM_CPU
+  output_blob_name: "fc7"
+  netpool_sz: 1
+}
+preproc_config: {
+  dataset_im_paths: ""
+  dataset_im_base_path: ""
+  dataset_feats_file: ""
+  neg_im_paths: "<NEG_IM_INDEX>"
+  neg_im_base_path: "<NEG_IM_PATH>"
+  neg_feats_file: "<NEG_FEATS_FILE>"
+  data_aug_type: DAT_ASPECT_CORNERS
+}
+service_config: {
+  data_aug_type: DAT_NONE
+}
+server_config: {
+  server_endpoint: "<SERVER_ENDPOINT>"
+  notify_endpoint: "<NOTIFY_ENDPOINT>"
+  image_cache_path: "<IMAGE_CACHE_PATH>"
+  rlist_cache_path: "<RLIST_CACHE_PATH>"
+}

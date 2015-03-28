@@ -17,6 +17,7 @@ def index_cpuvisor(base_path, component_cfgs):
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
+    index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
 
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
@@ -27,14 +28,10 @@ def index_cpuvisor(base_path, component_cfgs):
     # prepare paths
     log.info('[cpuvisor] Determining dataset paths...')
 
-    dataset_keyframes_path = os.path.join(collection['paths']['public_data'], 'keyframes')
+    dataset_keyframes_path = os.path.join(collection['paths']['private_data'], 'keyframes')
 
-    dataset_im_paths_file = os.path.join(collection['paths']['index_data'],
-                                         'cpuvisor-srv',
-                                         'dsetpaths_%s.txt' % collection['name'])
-    dataset_feats_file = os.path.join(collection['paths']['index_data'],
-                                      'cpuvisor-srv',
-                                      'dsetfeats_%s.binaryproto' % collection['name'])
+    dataset_im_paths_file = os.path.join(index_dir, 'dsetpaths_%s.txt' % collection['name'])
+    dataset_feats_file = os.path.join(index_dir, 'dsetfeats_%s.binaryproto' % collection['name'])
 
     # ensure directories exist
     ensure_fname_path_exists(dataset_im_paths_file)

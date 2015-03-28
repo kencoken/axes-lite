@@ -77,9 +77,8 @@ def ensure_fname_path_exists(fname):
 
 
 def copy_replace(src, dst, repl):
-
-  for line in src:
-    for pat,rep in repl:
-      if pat in line:
-        line = line.replace(pat, rep)
-    dst.write(line)
+    for line in src:
+        for pat,rep in repl:
+            if pat in line:
+                line = line.replace(pat, rep)
+        dst.write(line)
