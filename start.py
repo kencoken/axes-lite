@@ -32,7 +32,7 @@ def start_limas(base_path, component_cfgs):
 
 
 def start_axes_home(base_path, component_cfgs):
-    axes_home_path = s.path.join(component_cfgs['components']['axes-home'])
+    axes_home_path = os.path.join(component_cfgs['components']['axes-home'])
     with utils.change_cwd(axes_home_path):
         subprocess.call(['./start.sh' ], shell=True)
 
