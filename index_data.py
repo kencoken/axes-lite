@@ -70,19 +70,23 @@ def index_limas(base_path, component_cfgs):
     conf_fn = os.path.join(components['limas'], 'conf', collection + '.py')
 
     os.environ['PATH'] = os.environ['PATH'] + ":" + os.path.join( components['limas'], 'bin')
+
     with utils.change_cwd(components['limas']):
+
         # index main video files
         cmd = ["scripts/shotdetection/index_videos.py",
-                         conf_fn,
-                         collection,
-                         os.path.join(data['private_data'], 'ffprobe')]
+               conf_fn,
+               collection,
+               os.path.join(data['private_data'], 'ffprobe')]
         print cmd
         subprocess.call(cmd)
+
         # index video-level metatada
         subprocess.call(["scripts/integration/index_meta.py",
                          conf_fn,
                          collection,
                          os.path.join(data['private_data'], 'metadata')])
+
         # index shot and keyframe data
         subprocess.call(["scripts/integration/index_shots_from_timings.py",
                          conf_fn,
