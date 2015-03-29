@@ -29,7 +29,7 @@
             "debug": true,
             "mount_point": "/axes/home",
             "media_url": "/axes/home/media",
-            "media_path": "<axes-home>/client/media"
+            "media_path": "<axes-home>/client/media",
             "collection_url": "http://"
         }
     }

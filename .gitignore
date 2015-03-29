@@ -6,4 +6,6 @@
 /imsearch-tools/
 /nginx.conf
 /supervisor.conf
-
+/supervisor.log
+/supervisor.pid
+/supervisor.sock

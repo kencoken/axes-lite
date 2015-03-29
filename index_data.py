@@ -69,25 +69,25 @@ def index_limas(base_path, component_cfgs):
 
     conf_fn = os.path.join(components['limas'], 'conf', collection + '.py')
 
-    os.environ['PATH'] = os.environ['PATH'] + ":" +
-                         os.path.join( components['limas'], 'bin')
-
-    with utils.change_cwd(component_cfgs['paths']['limas']):
+    os.environ['PATH'] = os.environ['PATH'] + ":" + os.path.join( components['limas'], 'bin')
+    with utils.change_cwd(components['limas']):
         # index main video files
-        subprocess.call(["scripts/shotdetection/index_videos.py ",
+        cmd = ["scripts/shotdetection/index_videos.py",
                          conf_fn,
                          collection,
-                         os.path.join(data['private_data'], 'ffprobe')])
+                         os.path.join(data['private_data'], 'ffprobe')]
+        print cmd
+        subprocess.call(cmd)
         # index video-level metatada
         subprocess.call(["scripts/integration/index_meta.py",
                          conf_fn,
                          collection,
                          os.path.join(data['private_data'], 'metadata')])
         # index shot and keyframe data
-        subprocess.call(["scripts/shotdetection/index_shots_tec.py",
+        subprocess.call(["scripts/integration/index_shots_from_timings.py",
                          conf_fn,
                          collection,
-                         os.path.join(data['private_data'], 'keyframes')])
+                         os.path.join(data['private_data'], 'shottimings')])
 
 
 # main entry point
@@ -95,9 +95,9 @@ def index_limas(base_path, component_cfgs):
 
 if __name__ == "__main__":
 
-    dataset_list = args.dataset.split('=')
-    dataset = {}
-    dataset[dataset_list[0]] = dataset_list[1]
+    # dataset_list = sys.args.dataset.split('=')
+    # dataset = {}
+    # dataset[dataset_list[0]] = dataset_list[1]
 
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -105,10 +105,8 @@ if __name__ == "__main__":
 
     if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
         log.info('Indexing cpuvisor-srv component...')
-        prepare_cpuvisor(file_dir, component_cfgs,
-                         args.dataset_name, args.dataset_root_path)
+        index_cpuvisor(file_dir, component_cfgs)
 
     if os.path.isdir(component_cfgs['components']['limas']):
         log.info('Indexing limas component...')
-        prepare_limas(file_dir, component_cfgs,
-                      args.dataset_name, args.dataset_root_path)
+        index_limas(file_dir, component_cfgs)

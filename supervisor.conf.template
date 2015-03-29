@@ -1,25 +1,43 @@
 [supervisord]
 logfile=supervisor.log ; (main log file;default $CWD/supervisord.log)
-pidfile=supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+pidfile=supervisor.pid ; (supervisord pidfile;default supervisord.pid)
 childlogdir=logs ; ('AUTO' child log dir, default $TEMP)
+
+[unix_http_server]
+file=supervisord.sock
 
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
-serverurl=unix:///var/run/supervisor.sock ; use a unix:// URL  for a unix socket
+serverurl=unix://supervisord.sock ; use a unix:// URL  for a unix socket
 
 [program:cpuvisor-srv]
 command=
-autostart=true
+autostart=false
 directory=<CPUVISOR-SRV>/bin
 
 [program:limas]
-command=bin/limas webstart <LIMAS_PORT> <LIMAS_CONF>
-autostart=true
-directory=<LIMAS>
+command=limas webstart <LIMAS_PORT> <LIMAS_CONF>
+autostart=false
+directory=<LIMAS>/bin
 
 [program:imsearch-tools]
 command=python imsearch_http_service.py <IMSEARCH-TOOLS_PORT>
-autostart=true
+autostart=false
 directory=<IMSEARCH-TOOLS>
+
+[program:axes-home]
+command=start.sh
+autostart=false
+directory=<AXES-HOME>
+
+# [program:mongodb]
+# command=bin/mongod --dbpath <INDEX_PATH>/mongodb
+# autostart=false
+# directory=<MONGODB>
+#
+# [program:nginx]
+# command=sbin/nginx
+# autostart=false
+# directory=<NGINX>

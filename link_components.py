@@ -113,7 +113,7 @@ def prepare_limas(base_path, component_cfgs):
             ('<PATH_TO_INDEX_STRUCTURES>',
              os.path.join(collection['paths']['index_data'], 'limas')),
             ('<CPUVISOR_PORT>',
-             links['cpuvisor-srv']['server_port']),
+             str(links['cpuvisor-srv']['server_port'])),
             ('<URL_TO_COLLECTION_PATH>',
              links['axes-home']['collection_url'])
         ]
@@ -139,14 +139,17 @@ def prepare_supervisor(base_path, component_cfgs):
          os.path.join(components['limas'], 'conf', collection + '.py')),
         # cpu visor
         ('<CPUVISOR-SRV>',
-        components['cpuvisor-srv']),
+         components['cpuvisor-srv']),
         ('<CPUVISOR-SRV_PORT>',
          str(links['cpuvisor-srv']['server_port'])),
         # image search
         ('<IMSEARCH-TOOLS>',
-        components['imsearch-tools']),
+         components['imsearch-tools']),
         ('<IMSEARCH-TOOLS_PORT>',
-         str(links['imsearch-tools']['server_port']))
+         str(links['imsearch-tools']['server_port'])),
+        # AXES-HOME
+        ('<AXES-HOME>',
+         components['axes-home']),
     ]
 
     with open('supervisor.conf.template', 'r') as src_f:
@@ -198,6 +201,35 @@ def prepare_axes_home(base_path, component_cfgs):
     write_nginx_config()
     write_start_script()
 
+def prepare_imsearch_tools(base_path, component_cfgs):
+
+    component_paths = component_cfgs['components']
+    links = component_cfgs['links']
+    collection = component_cfgs['collection']
+    templates_dir = 'templates/imsearch-tools/'
+
+    log.info('[imsearch-tools] Preparing config...')
+
+    path = component_paths['imsearch-tools']
+
+    # Combine settings to pass to template generators
+    settings = {
+  
+    }
+    settings.update(links['imsearch-tools'])
+
+    def write_template(infile, outfile):
+        with open(templates_dir + infile) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+
+    def write_start_script():
+        outf = os.path.join(path, 'start.sh')
+        write_template('start.sh', outf)
+        
+    write_start_script()
 
 # main entry point
 # ................

@@ -30,7 +30,8 @@ components should be inserted.
 
 For convenience, a script is provided to undertake these two steps,
 downloading a copy of each component and placing them within the
-AXES-LITE directory, and then creating `config.json`:
+AXES-LITE directory, and then creating a suitable configuration file 
+`config.json`:
 
     $ python get_components.py
 
@@ -38,6 +39,17 @@ Once a copy has been obtained of each of the components, whether using
 the script or manually, the instructions in their respective `README` files
 should be followed to complete their individual installation along with their
 dependencies.
+
+### Preparing the demo dataset
+
+To experiment with the system, a small demo dataset consisting of two videos
+is provided. It can be obtained as follows:
+
+    $ wget http://axis.ewi.utwente.nl/collections/cAXESOpen/cAXESOpenMini.tgz
+		$ tar xvzp -f cAXESOpenMini.tgz
+		
+This will create a `cAXESOpenMini` folder in the axes-lite directory. Please
+specify this path both as private and as public data set. 
 
 ### Linking the components together
 
@@ -50,7 +62,7 @@ specified in `config.json`, we first link the systems together:
 
 Then we can index for a given dataset:
 
-    $ python index_data.py <DATASET_NAME> <DATASET_PATH>
+    $ python index_data.py
 
 **TODO: Add details of sample data here**
 
@@ -58,3 +70,21 @@ Usage
 -----
 
     $ python start.py
+
+### Installing NGINX
+
+    $ wget http://nginx.org/download/nginx-1.7.11.tar.gz
+		$ tar xvzp -f nginx-1.7.11.tar.gz
+		$ mv nginx-1.7.11 nginx
+		$ cd nginx
+		$ configure --prefix=$PWD
+	
+		
+### Start with supervisor 
+
+    $ virtualenv vent
+		$ . venv/bin/activate
+		$ pip install supervisor
+		$ supervisor -c supervisor.conf
+		$ supervisor -c supervisor.conf start all
+		
