@@ -196,7 +196,7 @@ def prepare_axes_home(base_path, component_cfgs):
 
     # Combine settings to pass to template generators
     settings = {
-        'service_url': 'http://localhost:{}/json_rpc'.format(limas_port),
+        'service_url': 'http://localhost:{}/json-rpc'.format(limas_port),
         'axes_home_path': axes_home_path,
     }
     settings.update(links['axes-home'])
