@@ -75,7 +75,8 @@ Usage
     $ tar xvzp -f nginx-1.7.11.tar.gz
     $ mv nginx-1.7.11 nginx
     $ cd nginx
-    $ configure --prefix=$PWD
+    $ ./configure --prefix=$PWD
+		$ make
 
 ### Start with supervisor
 

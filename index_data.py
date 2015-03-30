@@ -11,6 +11,11 @@ import logging
 log = logging.getLogger(__name__)
 logging.basicConfig()
 
+def ensure_fname_path_exists(fname):
+  if os.path.isfile(fname):
+    return True
+  else:
+    raise Exception(fname)
 
 def index_cpuvisor(base_path, component_cfgs):
 
@@ -34,8 +39,8 @@ def index_cpuvisor(base_path, component_cfgs):
     dataset_feats_file = os.path.join(index_dir, 'dsetfeats_%s.binaryproto' % collection['name'])
 
     # ensure directories exist
-    ensure_fname_path_exists(dataset_im_paths_file)
-    ensure_fname_path_exists(dataset_feats_file)
+    # ensure_fname_path_exists(dataset_im_paths_file)
+    # ensure_fname_path_exists(dataset_feats_file)
 
     # generate filelist for dataset
     log.info('[cpuvisor] Generating dataset filelist...')
@@ -78,7 +83,6 @@ def index_limas(base_path, component_cfgs):
                conf_fn,
                collection,
                os.path.join(data['private_data'], 'ffprobe')]
-        print cmd
         subprocess.call(cmd)
 
         # index video-level metatada
@@ -88,10 +92,18 @@ def index_limas(base_path, component_cfgs):
                          os.path.join(data['private_data'], 'metadata')])
 
         # index shot and keyframe data
-        subprocess.call(["scripts/integration/index_shots_from_timings.py",
-                         conf_fn,
-                         collection,
-                         os.path.join(data['private_data'], 'shottimings')])
+        cmd = ["scripts/integration/index_shots_from_timings.py",
+               conf_fn,
+               collection,
+               os.path.join(data['private_data'], 'shottimings')]
+        subprocess.call(cmd)
+        
+        # index shot and keyframe data
+        cmd = ["bin/limas",
+               'normalize',
+               conf_fn ]
+        print cmd
+        subprocess.call(cmd)
 
 
 # main entry point
@@ -107,9 +119,9 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
-        log.info('Indexing cpuvisor-srv component...')
-        index_cpuvisor(file_dir, component_cfgs)
+    # if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
+    #     log.info('Indexing cpuvisor-srv component...')
+    #     index_cpuvisor(file_dir, component_cfgs)
 
     if os.path.isdir(component_cfgs['components']['limas']):
         log.info('Indexing limas component...')

@@ -3,7 +3,8 @@
         "cpuvisor-srv": "cpuvisor-srv/",
         "imsearch-tools": "imsearch-tools/",
         "limas": "limas/",
-        "axes-home": "axes-home/"
+        "axes-home": "axes-home/",
+				"nginx": null
     },
     "collection": {
         "name": "cAXESOpen",
@@ -24,6 +25,9 @@
         "limas": {
             "server_port": 8081
         },
+        "nginx": {
+				    "server_port": 8080
+				},
         "axes-home": {
             "server_port": 8085,
             "debug": true,

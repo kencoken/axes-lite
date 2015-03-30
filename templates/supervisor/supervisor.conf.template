@@ -18,7 +18,7 @@ autostart=false
 directory=<CPUVISOR-SRV>
 
 [program:limas]
-command=limas webstart <LIMAS_PORT> <LIMAS_CONF>
+command=<LIMAS>/bin/limas webstart <LIMAS_PORT> <LIMAS_CONF>
 autostart=false
 directory=<LIMAS>/bin
 
@@ -28,7 +28,7 @@ autostart=false
 directory=<IMSEARCH-TOOLS>
 
 [program:axes-home]
-command=start.sh
+command=<AXES-HOME>/start.sh
 autostart=false
 directory=<AXES-HOME>
 
@@ -37,7 +37,7 @@ directory=<AXES-HOME>
 # autostart=false
 # directory=<MONGODB>
 #
-# [program:nginx]
-# command=sbin/nginx
-# autostart=false
-# directory=<NGINX>
+[program:nginx]
+command=nginx -c <NGINX>/conf/nginx.conf
+autostart=false
+directory=<NGINX>/sbin

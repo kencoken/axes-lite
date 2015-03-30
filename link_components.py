@@ -2,7 +2,7 @@
 # ------------------
 # Link together components of AXES-LITE - see README.md for details
 
-import os
+import os, stat
 import subprocess
 import shutil
 from scaffoldutils import utils
@@ -46,27 +46,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     log.info('[cpuvisor] Preparing config...')
 
     template_config = os.path.join(templates_dir, 'config.prototxt')
-    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])
-    
-    # prepare start
-    log.info('[cpuvisor] Preparing start script...')
-
-    settings = { }
-    settings.update(component_cfgs)
-
-    def write_template(infile, outfile):
-        with open(templates_dir + infile) as f:
-            template = f.read()
-        text = template.format(**settings)
-        with open(outfile, 'w') as f:
-            f.write(text)
-
-    def write_start_script():
-        outf = os.path.join(path, 'start.sh')
-        write_template('start.sh', outf)
-        
-    write_start_script()
-    
+    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])  
 
     replace_patterns = {
         '<MODELS_PATH>': models_path,
@@ -78,28 +58,49 @@ def prepare_cpuvisor(base_path, component_cfgs):
         '<IMAGE_CACHE_PATH>': image_cache_path,
         '<RLIST_CACHE_PATH>': rlist_cache_path
     }
+    replace_patterns = list(replace_patterns.iteritems())
 
     with open(template_config, 'r') as src_f:
         with open(output_config, 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, replace_patterns)
 
+    # prepare start
+    log.info('[cpuvisor] Preparing start script...')
+
+    settings = { 'name': component_cfgs['collection']['name'] }
+    #settings.update(component_cfgs)
+
+    def write_template(infile, outfile):
+        with open(os.path.join(templates_dir, infile)) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+
+    def write_start_script():
+        outf = os.path.join(path, 'start.sh')
+        write_template('start.sh', outf)
+        os.chmod(outf, 0755)
+        
+    write_start_script()
+
     # download models
 
-    log.info('[cpuvisor] Downloading models...')
-    download_models(target_dir)
-
-    # download features for negative images
-
-    log.info('[cpuvisor] Attempting to download features for negative images...')
-    if not cpuvisortls.download_neg_feats(negfeats_path):
-
-        # if no features could be downloaded, compute features using negative images instead
-        log.info('[cpuvisor] Could not download negative features - downloading negative training images instead...')
-        cpuvisortls.download_neg_images(negimgs_path)
-
-        log.info('[cpuvisor] Computing features for negative images...')
-        with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-            subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
+    # log.info('[cpuvisor] Downloading models...')
+#     download_models(target_dir)
+#
+#     # download features for negative images
+#
+#     log.info('[cpuvisor] Attempting to download features for negative images...')
+#     if not cpuvisortls.download_neg_feats(negfeats_path):
+#
+#         # if no features could be downloaded, compute features using negative images instead
+#         log.info('[cpuvisor] Could not download negative features - downloading negative training images instead...')
+#         cpuvisortls.download_neg_images(negimgs_path)
+#
+#         log.info('[cpuvisor] Computing features for negative images...')
+#         with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+#             subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
 
 
 def prepare_limas(base_path, component_cfgs):
@@ -171,9 +172,12 @@ def prepare_supervisor(base_path, component_cfgs):
         # AXES-HOME
         ('<AXES-HOME>',
          components['axes-home']),
+        # NGINX
+        ('<NGINX>',
+         components['nginx']),
     ]
 
-    with open('supervisor.conf.template', 'r') as src_f:
+    with open('templates/supervisor/supervisor.conf.template', 'r') as src_f:
         with open('supervisor.conf', 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
 
@@ -200,7 +204,7 @@ def prepare_axes_home(base_path, component_cfgs):
     if settings['mount_point'].endswith('/'):
         settings['mount_point'] = settings['mount_point'][:-1]
 
-    def write_template(infile, outfile):
+    def write_template(i nfile, outfile):
         with open(templates_dir + infile) as f:
             template = f.read()
         text = template.format(**settings)
@@ -212,11 +216,13 @@ def prepare_axes_home(base_path, component_cfgs):
         write_template('settings.cfg', outf)
 
     def write_nginx_config():
-        write_template('nginx.conf', 'nginx.conf')
+        outf = os.path.join(axes_home_path, 'nginx.conf')
+        write_template('nginx.conf', outf)
 
     def write_start_script():
         outf = os.path.join(axes_home_path, 'start.sh')
         write_template('start.sh', outf)
+        os.chmod(outf, 0755)
 
     write_server_settings()
     write_nginx_config()
@@ -234,9 +240,7 @@ def prepare_imsearch_tools(base_path, component_cfgs):
     path = component_paths['imsearch-tools']
 
     # Combine settings to pass to template generators
-    settings = {
-  
-    }
+    settings = { }
     settings.update(links['imsearch-tools'])
 
     def write_template(infile, outfile):
@@ -249,8 +253,26 @@ def prepare_imsearch_tools(base_path, component_cfgs):
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
         write_template('start.sh', outf)
+        os.chmod(outf, 0755)
         
     write_start_script()
+
+def prepare_nginx(base_path, component_cfgs):
+
+    links = component_cfgs['links']
+    collection = component_cfgs['collection']['name']
+    components = component_cfgs['components']
+
+    replace_patterns = {
+        '<AXES-HOME>': components['axes-home'],
+        '<NGINX_PORT>': str(links['nginx']['server_port']),
+        '<HOME>': base_path
+    }
+    replace_patterns = list(replace_patterns.iteritems())
+    
+    with open('templates/nginx/nginx.conf', 'r') as src_f:
+        with open(os.path.join(components['nginx'], 'conf', 'nginx.conf'), 'w') as dst_f:
+            utils.copy_replace(src_f, dst_f, replace_patterns)
 
 # main entry point
 # ................
@@ -271,6 +293,14 @@ if __name__ == "__main__":
     if os.path.isdir(component_cfgs['components']['axes-home']):
         log.info('Preparing axes-home component...')
         prepare_axes_home(file_dir, component_cfgs)
+        
+    if os.path.isdir(component_cfgs['components']['nginx']):
+        log.info('Preparing nginx component...')
+        prepare_nginx(file_dir, component_cfgs)
+        
+    if os.path.isdir(component_cfgs['components']['imsearch-tools']):
+        log.info('Preparing imsearch-tools component...')
+        prepare_imsearch_tools(file_dir, component_cfgs)
 
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)
