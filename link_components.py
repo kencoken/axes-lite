@@ -204,7 +204,7 @@ def prepare_axes_home(base_path, component_cfgs):
     if settings['mount_point'].endswith('/'):
         settings['mount_point'] = settings['mount_point'][:-1]
 
-    def write_template(i nfile, outfile):
+    def write_template(infile, outfile):
         with open(templates_dir + infile) as f:
             template = f.read()
         text = template.format(**settings)
