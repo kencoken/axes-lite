@@ -13,9 +13,9 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=unix://supervisord.sock ; use a unix:// URL  for a unix socket
 
 [program:cpuvisor-srv]
-command=
+command=start.sh
 autostart=false
-directory=<CPUVISOR-SRV>/bin
+directory=<CPUVISOR-SRV>
 
 [program:limas]
 command=limas webstart <LIMAS_PORT> <LIMAS_CONF>

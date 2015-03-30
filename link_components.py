@@ -18,8 +18,9 @@ def prepare_cpuvisor(base_path, component_cfgs):
     links = component_cfgs['links']
     collection = component_cfgs['collection']
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
-    templates_dir = 'templates/cpu-visor/'
-
+    templates_dir = 'templates/cpuvisor-srv/'
+    path = component_paths['cpuvisor-srv']
+    
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
 
@@ -45,7 +46,27 @@ def prepare_cpuvisor(base_path, component_cfgs):
     log.info('[cpuvisor] Preparing config...')
 
     template_config = os.path.join(templates_dir, 'config.prototxt')
-    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.prototxt')
+    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])
+    
+    # prepare start
+    log.info('[cpuvisor] Preparing start script...')
+
+    settings = { }
+    settings.update(component_cfgs)
+
+    def write_template(infile, outfile):
+        with open(templates_dir + infile) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+
+    def write_start_script():
+        outf = os.path.join(path, 'start.sh')
+        write_template('start.sh', outf)
+        
+    write_start_script()
+    
 
     replace_patterns = {
         '<MODELS_PATH>': models_path,

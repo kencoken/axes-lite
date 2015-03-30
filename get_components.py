@@ -59,9 +59,9 @@ from scaffoldutils import utils
 with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
     component_opts = json.load(f)
 
-ensure_dirs = [ component_opts['data']['paths']['private'], 
-                component_opts['data']['paths']['public'], 
-                component_opts['data']['paths']['index'], 
+ensure_dirs = [ component_opts['collection']['paths']['private'], 
+                component_opts['collection']['paths']['public'], 
+                component_opts['collection']['paths']['index'], 
                 'logs' ]
 for d in ensure_dirs:
   if not os.path.isdir(d):
