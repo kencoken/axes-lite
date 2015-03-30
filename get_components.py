@@ -10,52 +10,62 @@ from scaffoldutils import utils
 
 # update component_paths.json with paths if is default value
 
-default_val = '<PATH>'
-component_paths = {
-    'cpuvisor-srv': 'cpuvisor-srv/',
-    'imsearch-tools': 'imsearch-tools/',
-    'limas': 'limas/',
-    'axes-home': 'axes-home/'
-}
-
-with open(utils.COMPONENT_CFGS_FILE_TEMPLATE, 'r') as f:
-    component_opts = json.load(f)
-
-for (key, value) in component_paths.iteritems():
-
-    if (key not in component_opts['components']
-        or component_opts['components'][key] == default_val):
-
-        component_opts['components'][key] = value
-
-collection_paths = {
-    'public_data': 'public/',
-    'private_data': 'private/',
-    'index_data': 'index/',
-}
-
-for (key, value) in collection_paths.iteritems():
-
-    if (key not in component_opts['collection']['paths']
-        or component_opts['collection']['paths'][key] == default_val):
-
-        component_opts['collection']['paths'][key] = value
-
-        if not os.path.isdir(value):
-          os.mkdir(value)
-
-# write away changes
-
-with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
-    json.dump(component_opts, f,
-              sort_keys=True,
-              indent=4,
-              separators=(',', ': '))
-    f.write('\n')
+# default_val = '<PATH>'
+# component_paths = {
+#     'cpuvisor-srv': 'cpuvisor-srv/',
+#     'imsearch-tools': 'imsearch-tools/',
+#     'limas': 'limas/',
+#     'axes-home': 'axes-home/'
+# }
+#
+#
+#
+# for (key, value) in component_paths.iteritems():
+#
+#     if (key not in component_opts['components']
+#         or component_opts['components'][key] == default_val):
+#
+#         component_opts['components'][key] = value
+#
+# collection_paths = {
+#     'public_data': 'public/',
+#     'private_data': 'private/',
+#     'index_data': 'index/',
+# }
+#
+# for (key, value) in collection_paths.iteritems():
+#
+#     if (key not in component_opts['collection']['paths']
+#         or component_opts['collection']['paths'][key] == default_val):
+#
+#         component_opts['collection']['paths'][key] = value
+#
+#         if not os.path.isdir(value):
+#           os.mkdir(value)
+#
+# # write away changes
+#
+# with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
+#     json.dump(component_opts, f,
+#               sort_keys=True,
+#               indent=4,
+#               separators=(',', ': '))
+#     f.write('\n')
 
 # clone components
 
 # TODO: should download a specific tag
+
+with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
+    component_opts = json.load(f)
+
+ensure_dirs = [ component_opts['data']['paths']['private'], 
+                component_opts['data']['paths']['public'], 
+                component_opts['data']['paths']['index'], 
+                'logs' ]
+for d in ensure_dirs:
+  if not os.path.isdir(d):
+    os.mkdir(d)
 
 if not os.path.isdir(component_opts['components']['cpuvisor-srv']):
     subprocess.call(['git clone git@github.com:kencoken/cpuvisor-srv.git',

@@ -1,16 +1,16 @@
 {
     "components": {
-        "cpuvisor-srv": "<PATH>",
-        "imsearch-tools": "<PATH>",
-        "limas": "<PATH>",
-        "axes-home": "<PATH>"
+        "cpuvisor-srv": "cpuvisor-srv/",
+        "imsearch-tools": "imsearch-tools/",
+        "limas": "limas/",
+        "axes-home": "axes-home/"
     },
     "collection": {
         "name": "cAXESOpen",
         "paths": {
-            "public_data": "<PATH>",
-            "private_data": "<PATH>",
-            "index_data": "<PATH>"
+            "public_data": "public/",
+            "private_data": "private/",
+            "index_data": "index/"
         }
     },
     "links": {
