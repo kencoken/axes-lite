@@ -28,12 +28,12 @@ autostart=false
 directory=<IMSEARCH-TOOLS>
 
 [program:axes-home]
-command=start.sh
+command=<AXES-HOME>/start.sh
 autostart=false
 directory=<AXES-HOME>
 
 [program:axes-research]
-command=start.sh
+command=<AXES-RESEARCH>/start.sh
 autostart=false
 directory=<AXES-RESEARCH>
 
