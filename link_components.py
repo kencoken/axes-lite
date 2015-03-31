@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#
 # link_components.py
 # ------------------
 # Link together components of AXES-LITE - see README.md for details
@@ -345,35 +345,28 @@ def prepare_nginx(base_path, component_cfgs):
 # main entry point
 # ................
 
-if __name__ == "__main__":
+def main():
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
+    
+    def prepare(name, func):
+        path = component_cfgs['components'][name]
+        if path and os.path.isdir(path):
+            log.info('Preparing %s component...', name)
+            func(file_dir, component_cfgs)
+     
+    # Prepare components
+    prepare('cpuvisor-srv', prepare_cpuvisor)
+    prepare('limas', prepare_limas)
+    prepare('axes-home', prepare_axes_home)
+    prepare('axes-research', prepare_axes_research)
+    prepare('imsearch-tools', prepare_imsearch_tools)
+    prepare('nginx', prepare_nginx)
 
-    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
-        log.info('Preparing cpuvisor-srv component...')
-        prepare_cpuvisor(file_dir, component_cfgs)
-
-    if os.path.isdir(component_cfgs['components']['limas']):
-        log.info('Preparing limas component...')
-        prepare_limas(file_dir, component_cfgs)
-
-    if os.path.isdir(component_cfgs['components']['axes-home']):
-        log.info('Preparing axes-home component...')
-        prepare_axes_home(file_dir, component_cfgs)
-        
-    if os.path.isdir(component_cfgs['components']['axes-research']):
-        log.info('Preparing axes-research component...')
-        prepare_axes_research(file_dir, component_cfgs)
-        
-    if (component_cfgs['components']['nginx'] and 
-        os.path.isdir(component_cfgs['components']['nginx'])):
-        log.info('Preparing nginx component...')
-        prepare_nginx(file_dir, component_cfgs)
-        
-    if os.path.isdir(component_cfgs['components']['imsearch-tools']):
-        log.info('Preparing imsearch-tools component...')
-        prepare_imsearch_tools(file_dir, component_cfgs)
-
+    # Prepare supervisor
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)
+
+if __name__ == "__main__":
+    main()
