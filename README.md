@@ -21,7 +21,7 @@ First, the following components must be installed:
 
  - `cpuvisor-srv` available at: https://github.com/kencoken/cpuvisor-srv
  - `limas` available at: https://bitbucket.org/alyr/limas
- - `axes-home` available at: https://bitbucket.org/kevinmcguinness/axes-home
+ - `axes-home` available at: https://github.com/kevinmcguinness/axes-home
  - `axes-research` available at: https://github.com/kevinmcguinness/axes-research
 
 Following this, a `config.json` must be created with the paths of
