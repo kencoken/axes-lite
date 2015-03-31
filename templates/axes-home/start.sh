@@ -2,7 +2,7 @@
 
 ARGS="--log-level INFO"
 if [ "{debug}" = "True" ]; then
-    ARGS="--log-level DEBUG --debug"
+    ARGS="--log-level DEBUG"
 fi
 
 # CD to server folder

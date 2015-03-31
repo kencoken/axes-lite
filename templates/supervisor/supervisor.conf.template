@@ -38,6 +38,6 @@ directory=<AXES-HOME>
 # directory=<MONGODB>
 #
 [program:nginx]
-command=nginx -c <NGINX>/conf/nginx.conf
+command=<NGINX>/sbin/nginx -c <NGINX>/conf/nginx.conf
 autostart=false
 directory=<NGINX>/sbin

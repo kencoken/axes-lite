@@ -266,7 +266,8 @@ def prepare_nginx(base_path, component_cfgs):
     replace_patterns = {
         '<AXES-HOME>': components['axes-home'],
         '<NGINX_PORT>': str(links['nginx']['server_port']),
-        '<HOME>': base_path
+        '<HOME>': base_path,
+        '<PUBLIC_DATA>': component_cfgs['collection']['paths']['public_data']
     }
     replace_patterns = list(replace_patterns.iteritems())
     

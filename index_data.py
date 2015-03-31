@@ -102,9 +102,13 @@ def index_limas(base_path, component_cfgs):
         cmd = ["bin/limas",
                'normalize',
                conf_fn ]
-        print cmd
         subprocess.call(cmd)
 
+        # index shot and keyframe data
+        cmd = ["bin/limas",
+               'indexASR',
+               conf_fn ]
+        subprocess.call(cmd)
 
 # main entry point
 # ................
