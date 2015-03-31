@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # link_components.py
 # ------------------
 # Link together components of AXES-LITE - see README.md for details
@@ -137,7 +139,7 @@ def prepare_limas(base_path, component_cfgs):
             ('<CPUVISOR_PORT>',
              str(links['cpuvisor-srv']['server_port'])),
             ('<URL_TO_COLLECTION_PATH>',
-             links['axes-home']['collection_url'])
+             collection['url'])
         ]
 
         with open('conf/conf-template.py', 'r') as src_f:
@@ -172,9 +174,12 @@ def prepare_supervisor(base_path, component_cfgs):
         # AXES-HOME
         ('<AXES-HOME>',
          components['axes-home']),
+        # AXES-RESEARCH
+        ('<AXES-RESEARCH>',
+         components['axes-research']),
         # NGINX
         ('<NGINX>',
-         components['nginx']),
+         components['nginx'] or ''),
     ]
 
     with open('templates/supervisor/supervisor.conf.template', 'r') as src_f:
@@ -227,6 +232,68 @@ def prepare_axes_home(base_path, component_cfgs):
     write_server_settings()
     write_nginx_config()
     write_start_script()
+    
+def prepare_axes_research(base_path, component_cfgs):
+    component_paths = component_cfgs['components']
+    links = component_cfgs['links']
+    collection = component_cfgs['collection']
+    templates_dir = 'templates/axes-research/'
+    path = component_paths['axes-research']
+    limas_port = links['limas']['server_port']
+    
+    def gen_django_secret_key():
+        import random
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        return ''.join([random.SystemRandom().choice(chars) for i in range(50)])
+
+    settings = {
+        'service_url': 'http://localhost:{}/json-rpc'.format(limas_port),
+        'axes_research_path': path,
+        'collection_name': collection['name'],
+        'secret_key': gen_django_secret_key()
+    }
+    settings.update(links['axes-research'])
+    
+    def write_template(infile, outfile):
+        with open(templates_dir + infile) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+            
+    def write_server_settings():
+        outf = os.path.join(path, 'axesresearch/settings/local.py')
+        write_template('local.py', outf)
+
+    def write_nginx_config():
+        outf = os.path.join(path, 'nginx.conf')
+        write_template('nginx.conf', outf)
+
+    def write_start_script():
+        outf = os.path.join(path, 'start.sh')
+        write_template('start.sh', outf)
+        os.chmod(outf, 0755)
+        
+    def ensure_dir(path):
+        if not os.path.isdir(path):
+            os.makedirs(path)
+            
+    def collect_static_files():
+        activate_cmd = ". ./venv/bin/activate"
+        collect_cmd = "echo yes | python manage.py collectstatic"
+        with utils.change_cwd(path):
+            cmd = collect_cmd
+            if os.path.isdir("venv"):
+                cmd = activate_cmd + " && " + collect_cmd
+            os.system(cmd)
+    
+    log.info('[axes-research] Preparing config...')
+    ensure_dir(os.path.join(path, 'www/static'))
+    ensure_dir(os.path.join(path, 'www/media'))
+    write_server_settings()
+    collect_static_files()
+    write_nginx_config()
+    write_start_script()
 
 def prepare_imsearch_tools(base_path, component_cfgs):
 
@@ -265,6 +332,7 @@ def prepare_nginx(base_path, component_cfgs):
 
     replace_patterns = {
         '<AXES-HOME>': components['axes-home'],
+        '<AXES-RESEARCH>': components['axes-research'],
         '<NGINX_PORT>': str(links['nginx']['server_port']),
         '<HOME>': base_path,
         '<PUBLIC_DATA>': component_cfgs['collection']['paths']['public_data']
@@ -278,30 +346,28 @@ def prepare_nginx(base_path, component_cfgs):
 # main entry point
 # ................
 
-if __name__ == "__main__":
+def main():
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
+    
+    def prepare(name, func):
+        path = component_cfgs['components'][name]
+        if path and os.path.isdir(path):
+            log.info('Preparing %s component...', name)
+            func(file_dir, component_cfgs)
+     
+    # Prepare components
+    prepare('cpuvisor-srv', prepare_cpuvisor)
+    prepare('limas', prepare_limas)
+    prepare('axes-home', prepare_axes_home)
+    prepare('axes-research', prepare_axes_research)
+    prepare('imsearch-tools', prepare_imsearch_tools)
+    prepare('nginx', prepare_nginx)
 
-    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
-        log.info('Preparing cpuvisor-srv component...')
-        prepare_cpuvisor(file_dir, component_cfgs)
-
-    if os.path.isdir(component_cfgs['components']['limas']):
-        log.info('Preparing limas component...')
-        prepare_limas(file_dir, component_cfgs)
-
-    if os.path.isdir(component_cfgs['components']['axes-home']):
-        log.info('Preparing axes-home component...')
-        prepare_axes_home(file_dir, component_cfgs)
-        
-    if os.path.isdir(component_cfgs['components']['nginx']):
-        log.info('Preparing nginx component...')
-        prepare_nginx(file_dir, component_cfgs)
-        
-    if os.path.isdir(component_cfgs['components']['imsearch-tools']):
-        log.info('Preparing imsearch-tools component...')
-        prepare_imsearch_tools(file_dir, component_cfgs)
-
+    # Prepare supervisor
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)
+
+if __name__ == "__main__":
+    main()

@@ -21,24 +21,25 @@ First, the following components must be installed:
 
  - `cpuvisor-srv` available at: https://github.com/kencoken/cpuvisor-srv
  - `limas` available at: https://bitbucket.org/alyr/limas
- - `axes-home` available at: https://bitbucket.org/kevinmcguinness/axes-home
+ - `axes-home` available at: https://github.com/kevinmcguinness/axes-home
+ - `axes-research` available at: https://github.com/kevinmcguinness/axes-research
 
 Following this, a `config.json` must be created with the paths of
 each of the components of the system. A template is provided for this purpose
 `config.json.template`, in which the location of each of the above
 components should be inserted.
 
-For convenience, a script is provided to undertake these two steps,
-downloading a copy of each component and placing them within the
-AXES-LITE directory, and then creating a suitable configuration file
-`config.json`:
+For convenience, a script is provided to download the components. To use this, 
+first create a `config.json` by copying and editing the template file 
+`config.json.template` and then run:
 
     $ python get_components.py
 
 Once a copy has been obtained of each of the components, whether using
 the script or manually, the instructions in their respective `README` files
 should be followed to complete their individual installation along with their
-dependencies.
+dependencies. Note for the user interfaces (axes-home and axes-research), it is
+only necessary to install their dependencies. 
 
 ### Preparing the demo dataset
 

@@ -4,10 +4,12 @@
         "imsearch-tools": "imsearch-tools/",
         "limas": "limas/",
         "axes-home": "axes-home/",
-				"nginx": null
+        "axes-research": "axes-research/",
+        "nginx": null
     },
     "collection": {
         "name": "cAXESOpen",
+        "url": "http://...",
         "paths": {
             "public_data": "public/",
             "private_data": "private/",
@@ -26,15 +28,24 @@
             "server_port": 8081
         },
         "nginx": {
-				    "server_port": 8080
-				},
+            "server_port": 8080
+        },
         "axes-home": {
             "server_port": 8085,
             "debug": true,
             "mount_point": "/axes/home",
-            "media_url": "/axes/home/media",
-            "media_path": "<axes-home>/client/media",
-            "collection_url": "http://"
+        },
+        "axes-research": {
+            "server_port": 8086,
+            "debug": true,
+            "mount_point": "/axes/research",
+            "admin_name": "Admin",
+            "admin_email": "admin@site.com",
+            "database_name": "axeslite",
+            "registration_code_required": false,
+            "registration_code": "",
+            "time_zone": "Europe/Dublin"
         }
+        
     }
 }
