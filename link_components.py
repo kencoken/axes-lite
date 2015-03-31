@@ -174,6 +174,9 @@ def prepare_supervisor(base_path, component_cfgs):
         # AXES-HOME
         ('<AXES-HOME>',
          components['axes-home']),
+        # AXES-RESEARCH
+        ('<AXES-RESEARCH>',
+         components['axes-research']),
         # NGINX
         ('<NGINX>',
          components['nginx'] or ''),

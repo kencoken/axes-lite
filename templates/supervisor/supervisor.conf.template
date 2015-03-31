@@ -28,9 +28,14 @@ autostart=false
 directory=<IMSEARCH-TOOLS>
 
 [program:axes-home]
-command=<AXES-HOME>/start.sh
+command=start.sh
 autostart=false
 directory=<AXES-HOME>
+
+[program:axes-research]
+command=start.sh
+autostart=false
+directory=<AXES-RESEARCH>
 
 # [program:mongodb]
 # command=bin/mongod --dbpath <INDEX_PATH>/mongodb
