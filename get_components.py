@@ -1,86 +1,61 @@
-# get_components.py
-# -----------------
-# Get AXES-LITE components and store paths - see README.md for details
+#!/usr/bin/env python
+"""
+Get AXES-LITE components and store paths - see README.md for details
+"""
 
 import os
 import subprocess
 import json
-import pprint
+
 from scaffoldutils import utils
-
-# update component_paths.json with paths if is default value
-
-# default_val = '<PATH>'
-# component_paths = {
-#     'cpuvisor-srv': 'cpuvisor-srv/',
-#     'imsearch-tools': 'imsearch-tools/',
-#     'limas': 'limas/',
-#     'axes-home': 'axes-home/'
-# }
-#
-#
-#
-# for (key, value) in component_paths.iteritems():
-#
-#     if (key not in component_opts['components']
-#         or component_opts['components'][key] == default_val):
-#
-#         component_opts['components'][key] = value
-#
-# collection_paths = {
-#     'public_data': 'public/',
-#     'private_data': 'private/',
-#     'index_data': 'index/',
-# }
-#
-# for (key, value) in collection_paths.iteritems():
-#
-#     if (key not in component_opts['collection']['paths']
-#         or component_opts['collection']['paths'][key] == default_val):
-#
-#         component_opts['collection']['paths'][key] = value
-#
-#         if not os.path.isdir(value):
-#           os.mkdir(value)
-#
-# # write away changes
-#
-# with open(utils.COMPONENT_CFGS_FILE, 'w') as f:
-#     json.dump(component_opts, f,
-#               sort_keys=True,
-#               indent=4,
-#               separators=(',', ': '))
-#     f.write('\n')
-
-# clone components
-
-# TODO: should download a specific tag
 
 with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
     component_opts = json.load(f)
+    
+ensure_dirs = [ 
+    component_opts['collection']['paths']['private_data'], 
+    component_opts['collection']['paths']['public_data'], 
+    component_opts['collection']['paths']['index_data'], 
+    'logs'
+]
 
-ensure_dirs = [ component_opts['collection']['paths']['private_data'], 
-                component_opts['collection']['paths']['public_data'], 
-                component_opts['collection']['paths']['index_data'], 
-                'logs' ]
-for d in ensure_dirs:
-  if not os.path.isdir(d):
-    os.mkdir(d)
+component_repos = [
+    ('git', 'cpuvisor-srv', 'git@github.com:kencoken/cpuvisor-srv.git', 'al-integration-prep'),
+    ('git', 'imsearch-tools', 'git@github.com:kencoken/imsearch-tools.git'),
+    ('hg' , 'limas', 'ssh://hg@bitbucket.org/alyr/limas'),
+    ('git', 'axes-home', 'git@bitbucket.org:kevinmcguinness/axes-home.git'),
+    ('git', 'axes-research', 'https://github.com/kevinmcguinness/axes-research.git'),
+]
 
-if not os.path.isdir(component_opts['components']['cpuvisor-srv']):
-    subprocess.call(['git clone git@github.com:kencoken/cpuvisor-srv.git',
-                     component_opts['components']['cpuvisor-srv']], shell=True)
-    with utils.change_cwd('cpuvisor-srv'):
-        subprocess.call('git checkout al-integration-prep', shell=True) # TODO: remove this custom branch
+def ensure_dir(path):
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
-if not os.path.isdir(component_opts['components']['imsearch-tools']):
-    subprocess.call(['git clone git@github.com:kencoken/imsearch-tools.git',
-                     component_opts['components']['imsearch-tools']], shell=True)
+def repo_clone(cmd, component, url, branch=None):
+    default_val = '<PATH>'
+    path = component_opts['components'][component]
+    if path is None or path == default_val:
+        return False
+    if os.path.isdir(path):
+        return False
+    cmd = ' '.join([cmd, 'clone', url, path])
+    subprocess.call(cmd, shell=True)
+    if branch:
+        with utils.change_cwd(path):
+            cmd = ' '.join([cmd, 'checkout', branch])
+            subprocess.call(cmd, shell=True) 
+    return True
 
-if not os.path.isdir(component_opts['components']['limas']):
-    subprocess.call(['hg clone ssh://hg@bitbucket.org/alyr/limas',
-                     component_opts['components']['limas']], shell=True)
+def main():
+    # Create dirs
+    map(ensure_dir, ensure_dirs)
 
-if not os.path.isdir(component_opts['components']['axes-home']):
-    subprocess.call(['git clone git@bitbucket.org:kevinmcguinness/axes-home.git',
-                     component_opts['components']['axes-home']], shell=True)
+    # Clone repos
+    for repo in component_repos:
+        repo_clone(*repo)
+
+if __name__ == '__main__':
+    main()
+
+
+

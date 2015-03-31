@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # link_components.py
 # ------------------
 # Link together components of AXES-LITE - see README.md for details
@@ -174,7 +176,7 @@ def prepare_supervisor(base_path, component_cfgs):
          components['axes-home']),
         # NGINX
         ('<NGINX>',
-         components['nginx']),
+         components['nginx'] or ''),
     ]
 
     with open('templates/supervisor/supervisor.conf.template', 'r') as src_f:
@@ -225,6 +227,68 @@ def prepare_axes_home(base_path, component_cfgs):
         os.chmod(outf, 0755)
 
     write_server_settings()
+    write_nginx_config()
+    write_start_script()
+    
+def prepare_axes_research(base_path, component_cfgs):
+    component_paths = component_cfgs['components']
+    links = component_cfgs['links']
+    collection = component_cfgs['collection']
+    templates_dir = 'templates/axes-research/'
+    path = component_paths['axes-research']
+    limas_port = links['limas']['server_port']
+    
+    def gen_django_secret_key():
+        import random
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        return ''.join([random.SystemRandom().choice(chars) for i in range(50)])
+
+    settings = {
+        'service_url': 'http://localhost:{}/json-rpc'.format(limas_port),
+        'axes_research_path': path,
+        'collection_name': collection['name'],
+        'secret_key': gen_django_secret_key()
+    }
+    settings.update(links['axes-research'])
+    
+    def write_template(infile, outfile):
+        with open(templates_dir + infile) as f:
+            template = f.read()
+        text = template.format(**settings)
+        with open(outfile, 'w') as f:
+            f.write(text)
+            
+    def write_server_settings():
+        outf = os.path.join(path, 'axesresearch/settings/local.py')
+        write_template('local.py', outf)
+
+    def write_nginx_config():
+        outf = os.path.join(path, 'nginx.conf')
+        write_template('nginx.conf', outf)
+
+    def write_start_script():
+        outf = os.path.join(path, 'start.sh')
+        write_template('start.sh', outf)
+        os.chmod(outf, 0755)
+        
+    def ensure_dir(path):
+        if not os.path.isdir(path):
+            os.makedirs(path)
+            
+    def collect_static_files():
+        activate_cmd = ". ./venv/bin/activate"
+        collect_cmd = "python manage.py collectstatic"
+        with utils.change_cwd(path):
+            cmd = collect_cmd
+            if os.path.isdir("venv"):
+                cmd = activate_cmd + " && " + collect_cmd
+            os.system(cmd)
+    
+    log.info('[axes-research] Preparing config...')
+    ensure_dir(os.path.join(path, 'www/static'))
+    ensure_dir(os.path.join(path, 'www/media'))
+    write_server_settings()
+    collect_static_files()
     write_nginx_config()
     write_start_script()
 
@@ -294,7 +358,12 @@ if __name__ == "__main__":
         log.info('Preparing axes-home component...')
         prepare_axes_home(file_dir, component_cfgs)
         
-    if os.path.isdir(component_cfgs['components']['nginx']):
+    if os.path.isdir(component_cfgs['components']['axes-research']):
+        log.info('Preparing axes-research component...')
+        prepare_axes_research(file_dir, component_cfgs)
+        
+    if (component_cfgs['components']['nginx'] and 
+        os.path.isdir(component_cfgs['components']['nginx'])):
         log.info('Preparing nginx component...')
         prepare_nginx(file_dir, component_cfgs)
         

@@ -4,6 +4,7 @@
         "imsearch-tools": "imsearch-tools/",
         "limas": "limas/",
         "axes-home": "axes-home/",
+        "axes-research": "axes-research/",
         "nginx": null
     },
     "collection": {
@@ -32,9 +33,19 @@
             "server_port": 8085,
             "debug": true,
             "mount_point": "/axes/home",
-            "media_url": "/axes/home/media",
-            "media_path": "<axes-home>/client/media",
-            "collection_url": "http://"
+            "collection_url": "http://..."
+        },
+        "axes-research": {
+            "server_port": 8086,
+            "debug": true,
+            "mount_point": "/axes/research",
+            "admin_name": "Admin",
+            "admin_email": "admin@site.com",
+            "database_name": "axeslite",
+            "registration_code_required": false,
+            "registration_code": "",
+            "time_zone": "Europe/Dublin"
         }
+        
     }
 }
