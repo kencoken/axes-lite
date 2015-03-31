@@ -332,6 +332,7 @@ def prepare_nginx(base_path, component_cfgs):
 
     replace_patterns = {
         '<AXES-HOME>': components['axes-home'],
+        '<AXES-RESEARCH>': components['axes-research'],
         '<NGINX_PORT>': str(links['nginx']['server_port']),
         '<HOME>': base_path
     }
