@@ -139,7 +139,7 @@ def prepare_limas(base_path, component_cfgs):
             ('<CPUVISOR_PORT>',
              str(links['cpuvisor-srv']['server_port'])),
             ('<URL_TO_COLLECTION_PATH>',
-             links['axes-home']['collection_url'])
+             collection['url'])
         ]
 
         with open('conf/conf-template.py', 'r') as src_f:

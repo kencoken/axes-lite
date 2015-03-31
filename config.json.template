@@ -9,6 +9,7 @@
     },
     "collection": {
         "name": "cAXESOpen",
+        "url": "http://...",
         "paths": {
             "public_data": "public/",
             "private_data": "private/",
@@ -33,7 +34,6 @@
             "server_port": 8085,
             "debug": true,
             "mount_point": "/axes/home",
-            "collection_url": "http://..."
         },
         "axes-research": {
             "server_port": 8086,
