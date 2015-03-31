@@ -280,7 +280,7 @@ def prepare_axes_research(base_path, component_cfgs):
             
     def collect_static_files():
         activate_cmd = ". ./venv/bin/activate"
-        collect_cmd = "python manage.py collectstatic"
+        collect_cmd = "echo yes | python manage.py collectstatic"
         with utils.change_cwd(path):
             cmd = collect_cmd
             if os.path.isdir("venv"):
