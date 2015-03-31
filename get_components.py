@@ -23,7 +23,7 @@ component_repos = [
     ('git', 'cpuvisor-srv', 'git@github.com:kencoken/cpuvisor-srv.git', 'al-integration-prep'),
     ('git', 'imsearch-tools', 'git@github.com:kencoken/imsearch-tools.git'),
     ('hg' , 'limas', 'ssh://hg@bitbucket.org/alyr/limas'),
-    ('git', 'axes-home', 'git@bitbucket.org:kevinmcguinness/axes-home.git'),
+    ('git', 'axes-home', 'https://github.com/kevinmcguinness/axes-home.git'),
     ('git', 'axes-research', 'https://github.com/kevinmcguinness/axes-research.git'),
 ]
 
