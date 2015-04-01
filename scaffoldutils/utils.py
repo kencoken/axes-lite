@@ -86,7 +86,7 @@ def copy_replace(src, dst, repl):
         dst.write(line)
 
 
-def write_template(infile, outfile, settings):
+def write_template(templates_dir, infile, outfile, settings):
     with open(os.path.join(templates_dir, infile)) as f:
         template = f.read()
     text = template.format(**settings)
