@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-#
-# link_components.py
-# ------------------
-# Link together components of AXES-LITE - see README.md for details
+"""
+Link together components of AXES-LITE - see README.md for details
+"""
 
 import os, stat
 import subprocess
