@@ -20,7 +20,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     links = component_cfgs['links']
     collection = component_cfgs['collection']
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
-    templates_dir = 'templates/cpuvisor-srv/'
+    templates_dir = os.path.join('templates', 'cpuvisor-srv')
     path = component_paths['cpuvisor-srv']
 
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
@@ -72,16 +72,9 @@ def prepare_cpuvisor(base_path, component_cfgs):
     settings = {'name': component_cfgs['collection']['name']}
     #settings.update(component_cfgs)
 
-    def write_template(infile, outfile):
-        with open(os.path.join(templates_dir, infile)) as f:
-            template = f.read()
-        text = template.format(**settings)
-        with open(outfile, 'w') as f:
-            f.write(text)
-
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
-        write_template('start.sh', outf)
+        utils.write_template(templates_dir, 'start.sh', outf, settings)
         os.chmod(outf, 0755)
 
     write_start_script()
@@ -129,25 +122,20 @@ def prepare_limas(base_path, component_cfgs):
             with open('set_env.sh', 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
 
-        conf_replace_patterns = [
-            ('<COLLECTION_NAME>',
-             collection['name']),
-            ('<PATH_TO_WEB_ACCESSIBLE_IMAGES>',
-             collection['paths']['public_data']),
-            ('<PATH_TO_INDEX_STRUCTURES>',
-             os.path.join(collection['paths']['index_data'], 'limas')),
-            ('<CPUVISOR_PORT>',
-             str(links['cpuvisor-srv']['server_port'])),
-            ('<URL_TO_COLLECTION_PATH>',
-             collection['url']),
-            ('<MONGODB_PORT>',
-             str(links['mongodb']['server_port'])),
-            ('<IMSEARCH_PORT>',
-             str(links['imsearch-tools']['server_port'])),
-        ]
+        conf_replace_patterns = {
+            '<COLLECTION_NAME>': collection['name'],
+            '<PATH_TO_WEB_ACCESSIBLE_IMAGES>': collection['paths']['public_data'],
+            '<PATH_TO_INDEX_STRUCTURES>': os.path.join(collection['paths']['index_data'],
+                                                       'limas'),
+            '<CPUVISOR_PORT>': str(links['cpuvisor-srv']['server_port']),
+            '<URL_TO_COLLECTION_PATH>': collection['url'],
+            '<MONGODB_PORT>': str(links['mongodb']['server_port']),
+            '<IMSEARCH_PORT>': str(links['imsearch-tools']['server_port'])
+        }
+        conf_replace_patterns = list(conf_replace_patterns.iteritems())
 
-        with open('conf/conf-template.py', 'r') as src_f:
-            with open('conf/' + collection['name'] + '.py', 'w') as dst_f:
+        with open(os.path.join('conf', 'conf-template.py'), 'r') as src_f:
+            with open(os.path.join('conf', collection['name'] + '.py'), 'w') as dst_f:
                 utils.copy_replace(src_f, dst_f, conf_replace_patterns)
 
 
@@ -157,44 +145,24 @@ def prepare_supervisor(base_path, component_cfgs):
     collection = component_cfgs['collection']['name']
     components = component_cfgs['components']
 
-    set_env_replace_patterns = [
-        # index path
-        ('<INDEX_PATH>',
-         component_cfgs['collection']['paths']['index_data']),
-        # limas
-        ('<LIMAS>',
-         components['limas']),
-        ('<LIMAS_PORT>',
-         str(links['limas']['server_port'])),
-        ('<LIMAS_CONF>',
-         os.path.join(components['limas'], 'conf', collection + '.py')),
-        # cpu visor
-        ('<CPUVISOR-SRV>',
-         components['cpuvisor-srv']),
-        ('<CPUVISOR-SRV_PORT>',
-         str(links['cpuvisor-srv']['server_port'])),
-        # image search
-        ('<IMSEARCH-TOOLS>',
-         components['imsearch-tools']),
-        ('<IMSEARCH-TOOLS_PORT>',
-         str(links['imsearch-tools']['server_port'])),
-        # AXES-HOME
-        ('<AXES-HOME>',
-         components['axes-home']),
-        # AXES-RESEARCH
-        ('<AXES-RESEARCH>',
-         components['axes-research']),
-        # NGINX
-        ('<NGINX>',
-         components['nginx'] or ''),
-        # MONGODB
-        ('<MONGODB>',
-         components['mongodb']),
-        ('<MONGODB_PORT>',
-         str(links['mongodb']['server_port'])),
-    ]
+    set_env_replace_patterns = {
+        '<INDEX_PATH>': component_cfgs['collection']['paths']['index_data'],
+        '<LIMAS>': components['limas'],
+        '<LIMAS_PORT>': str(links['limas']['server_port']),
+        '<LIMAS_CONF>': os.path.join(components['limas'], 'conf', collection + '.py'),
+        '<CPUVISOR-SRV>': components['cpuvisor-srv'],
+        '<CPUVISOR-SRV_PORT>': str(links['cpuvisor-srv']['server_port']),
+        '<IMSEARCH-TOOLS>': components['imsearch-tools'],
+        '<IMSEARCH-TOOLS_PORT>': str(links['imsearch-tools']['server_port']),
+        '<AXES-HOME>': components['axes-home'],
+        '<AXES-RESEARCH>': components['axes-research'],
+        '<NGINX>': components['nginx'] or '',
+        '<MONGODB>': components['mongodb'],
+        '<MONGODB_PORT': str(links['mongodb']['server_port'])
+    }
+    set_env_replace_patterns = list(set_env_replace_patterns.iteritems())
 
-    with open('templates/supervisor/supervisor.conf.template', 'r') as src_f:
+    with open(os.path.join('templates', 'supervisor', 'supervisor.conf.template'), 'r') as src_f:
         with open('supervisor.conf', 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
 
@@ -204,7 +172,7 @@ def prepare_axes_home(base_path, component_cfgs):
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
-    templates_dir = 'templates/axes-home/'
+    templates_dir = os.path.join('templates', 'axes-home')
 
     log.info('[axes-home] Preparing config...')
 
@@ -218,27 +186,20 @@ def prepare_axes_home(base_path, component_cfgs):
     }
     settings.update(links['axes-home'])
 
-    if settings['mount_point'].endswith('/'):
+    if settings['mount_point'].endswith(os.sep):
         settings['mount_point'] = settings['mount_point'][:-1]
-
-    def write_template(infile, outfile):
-        with open(templates_dir + infile) as f:
-            template = f.read()
-        text = template.format(**settings)
-        with open(outfile, 'w') as f:
-            f.write(text)
 
     def write_server_settings():
         outf = os.path.join(axes_home_path, 'server', 'settings.cfg')
-        write_template('settings.cfg', outf)
+        utils.write_template(templates_dir, 'settings.cfg', outf, settings)
 
     def write_nginx_config():
         outf = os.path.join(axes_home_path, 'nginx.conf')
-        write_template('nginx.conf', outf)
+        utils.write_template(templates_dir, 'settings.cfg', outf, settings)
 
     def write_start_script():
         outf = os.path.join(axes_home_path, 'start.sh')
-        write_template('start.sh', outf)
+        utils.write_template(templates_dir, 'settings.cfg', outf, settings)
         os.chmod(outf, 0755)
 
     write_server_settings()
@@ -247,10 +208,11 @@ def prepare_axes_home(base_path, component_cfgs):
 
 
 def prepare_axes_research(base_path, component_cfgs):
+
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
-    templates_dir = 'templates/axes-research/'
+    templates_dir = os.path.join('templates', 'axes-research')
     path = component_paths['axes-research']
     limas_port = links['limas']['server_port']
 
@@ -267,24 +229,17 @@ def prepare_axes_research(base_path, component_cfgs):
     }
     settings.update(links['axes-research'])
 
-    def write_template(infile, outfile):
-        with open(templates_dir + infile) as f:
-            template = f.read()
-        text = template.format(**settings)
-        with open(outfile, 'w') as f:
-            f.write(text)
-
     def write_server_settings():
-        outf = os.path.join(path, 'axesresearch/settings/local.py')
-        write_template('local.py', outf)
+        outf = os.path.join(path, 'axesresearch', 'settings', 'local.py')
+        utils.write_template(templates_dir, 'local.py', outf, settings)
 
     def write_nginx_config():
         outf = os.path.join(path, 'nginx.conf')
-        write_template('nginx.conf', outf)
+        utils.write_template(templates_dir, 'nginx.conf', outf, settings)
 
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
-        write_template('start.sh', outf)
+        utils.write_template(templates_dir, 'start.sh', outf, settings)
         os.chmod(outf, 0755)
 
     def ensure_dir(path):
@@ -301,8 +256,10 @@ def prepare_axes_research(base_path, component_cfgs):
             os.system(cmd)
 
     log.info('[axes-research] Preparing config...')
-    ensure_dir(os.path.join(path, 'www/static'))
-    ensure_dir(os.path.join(path, 'www/media'))
+
+    ensure_dir(os.path.join(path, 'www', 'static'))
+    ensure_dir(os.path.join(path, 'www', 'media'))
+
     write_server_settings()
     collect_static_files()
     write_nginx_config()
@@ -314,7 +271,7 @@ def prepare_imsearch_tools(base_path, component_cfgs):
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
     collection = component_cfgs['collection']
-    templates_dir = 'templates/imsearch-tools/'
+    templates_dir = os.path.join('templates', 'imsearch-tools')
 
     log.info('[imsearch-tools] Preparing config...')
 
@@ -324,16 +281,9 @@ def prepare_imsearch_tools(base_path, component_cfgs):
     settings = { }
     settings.update(links['imsearch-tools'])
 
-    def write_template(infile, outfile):
-        with open(templates_dir + infile) as f:
-            template = f.read()
-        text = template.format(**settings)
-        with open(outfile, 'w') as f:
-            f.write(text)
-
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
-        write_template('start.sh', outf)
+        utils.write_template(templates_dir, 'start.sh', outf, settings)
         os.chmod(outf, 0755)
 
     write_start_script()
@@ -354,14 +304,16 @@ def prepare_nginx(base_path, component_cfgs):
     }
     replace_patterns = list(replace_patterns.iteritems())
 
-    with open('templates/nginx/nginx.conf', 'r') as src_f:
+    with open(os.path.join('templates', 'nginx', 'nginx.conf'), 'r') as src_f:
         with open(os.path.join(components['nginx'], 'conf', 'nginx.conf'), 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, replace_patterns)
+
 
 # main entry point
 # ................
 
 def main():
+
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
@@ -383,6 +335,7 @@ def main():
     # Prepare supervisor
     log.info('Preparing supervisor configuration...')
     prepare_supervisor(file_dir, component_cfgs)
+
 
 if __name__ == "__main__":
     main()

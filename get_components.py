@@ -28,9 +28,11 @@ component_repos = [
     ('git', 'axes-research', 'https://github.com/kevinmcguinness/axes-research.git'),
 ]
 
+
 def ensure_dir(path):
     if not os.path.isdir(path):
         os.mkdir(path)
+
 
 def repo_clone(cmd, component, url, branch=None):
     default_val = '<PATH>'
@@ -47,6 +49,10 @@ def repo_clone(cmd, component, url, branch=None):
             subprocess.call(cmd, shell=True)
     return True
 
+
+# main entry point
+# ................
+
 def main():
     # Create dirs
     map(ensure_dir, ensure_dirs)
@@ -54,6 +60,7 @@ def main():
     # Clone repos
     for repo in component_repos:
         repo_clone(*repo)
+
 
 if __name__ == '__main__':
     main()
