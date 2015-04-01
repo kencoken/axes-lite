@@ -47,7 +47,8 @@ def prepare_cpuvisor(base_path, component_cfgs):
     log.info('[cpuvisor] Preparing config...')
 
     template_config = os.path.join(templates_dir, 'config.prototxt')
-    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])
+    output_config = os.path.join(component_paths['cpuvisor-srv'],
+                                 'config.%s.prototxt' % collection['name'])
 
     replace_patterns = {
         '<MODELS_PATH>': models_path,
@@ -68,12 +69,10 @@ def prepare_cpuvisor(base_path, component_cfgs):
     # prepare start
     log.info('[cpuvisor] Preparing start script...')
 
-    settings = {'name': component_cfgs['collection']['name']}
-    #settings.update(component_cfgs)
-
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
-        utils.write_template(templates_dir, 'start.sh', outf, settings)
+        utils.write_template(templates_dir, 'start.sh', outf,
+                             {'name': component_cfgs['collection']['name']})
         os.chmod(outf, 0755)
 
     write_start_script()

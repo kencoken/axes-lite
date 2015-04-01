@@ -20,7 +20,7 @@
     "links": {
         "mongodb": {
             "server_port": 27017
-        }
+        },
         "cpuvisor-srv": {
             "server_port": 5555,
             "notify_port": 5556
@@ -37,7 +37,7 @@
         "axes-home": {
             "server_port": 8085,
             "debug": true,
-            "mount_point": "/axes/home",
+            "mount_point": "/axes/home"
         },
         "axes-research": {
             "server_port": 8086,

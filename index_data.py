@@ -11,11 +11,6 @@ import logging
 log = logging.getLogger(__name__)
 logging.basicConfig()
 
-def ensure_fname_path_exists(fname):
-  if os.path.isfile(fname):
-    return True
-  else:
-    raise Exception(fname)
 
 def index_cpuvisor(base_path, component_cfgs):
 
@@ -38,10 +33,6 @@ def index_cpuvisor(base_path, component_cfgs):
     dataset_im_paths_file = os.path.join(index_dir, 'dsetpaths_%s.txt' % collection['name'])
     dataset_feats_file = os.path.join(index_dir, 'dsetfeats_%s.binaryproto' % collection['name'])
 
-    # ensure directories exist
-    # ensure_fname_path_exists(dataset_im_paths_file)
-    # ensure_fname_path_exists(dataset_feats_file)
-
     # generate filelist for dataset
     log.info('[cpuvisor] Generating dataset filelist...')
     cpuvisorutil.generate_imagelist(dataset_im_paths_file, dataset_keyframes_path)
@@ -60,9 +51,9 @@ def index_cpuvisor(base_path, component_cfgs):
                                  dataset_feats_file)
 
     # compute features for dataset
-    log.info('[cpuvisor] Computing features for dataset...')
-    with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-        subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
+    # log.info('[cpuvisor] Computing features for dataset...')
+    # with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+    #     subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
 
 
 def index_limas(base_path, component_cfgs):
@@ -97,7 +88,7 @@ def index_limas(base_path, component_cfgs):
                collection,
                os.path.join(data['private_data'], 'shottimings')]
         subprocess.call(cmd)
-        
+
         # index shot and keyframe data
         cmd = ["bin/limas",
                'normalize',
@@ -110,22 +101,19 @@ def index_limas(base_path, component_cfgs):
                conf_fn ]
         subprocess.call(cmd)
 
+
 # main entry point
 # ................
 
 if __name__ == "__main__":
 
-    # dataset_list = sys.args.dataset.split('=')
-    # dataset = {}
-    # dataset[dataset_list[0]] = dataset_list[1]
-
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    # if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
-    #     log.info('Indexing cpuvisor-srv component...')
-    #     index_cpuvisor(file_dir, component_cfgs)
+    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
+        log.info('Indexing cpuvisor-srv component...')
+        index_cpuvisor(file_dir, component_cfgs)
 
     if os.path.isdir(component_cfgs['components']['limas']):
         log.info('Indexing limas component...')
