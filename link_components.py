@@ -195,11 +195,11 @@ def prepare_axes_home(base_path, component_cfgs):
 
     def write_nginx_config():
         outf = os.path.join(axes_home_path, 'nginx.conf')
-        utils.write_template(templates_dir, 'settings.cfg', outf, settings)
+        utils.write_template(templates_dir, 'nginx.conf', outf, settings)
 
     def write_start_script():
         outf = os.path.join(axes_home_path, 'start.sh')
-        utils.write_template(templates_dir, 'settings.cfg', outf, settings)
+        utils.write_template(templates_dir, 'start.sh', outf, settings)
         os.chmod(outf, 0755)
 
     write_server_settings()
