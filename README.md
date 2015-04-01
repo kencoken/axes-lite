@@ -77,7 +77,15 @@ Usage
     $ mv nginx-1.7.11 nginx
     $ cd nginx
     $ ./configure --prefix=$PWD
-		$ make
+    $ make
+
+### Installing Mongodb
+    $ get download url fitting operation system under https://www.mongodb.org/downloads
+    $ wget <url>
+    $ tar xvzp -f mongodb*tgz
+    $ rm mongodb*tgz
+    $ mv mongodb* mongodb
+    
 
 ### Start with supervisor
 

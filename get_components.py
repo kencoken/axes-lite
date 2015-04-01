@@ -16,6 +16,7 @@ ensure_dirs = [
     component_opts['collection']['paths']['private_data'], 
     component_opts['collection']['paths']['public_data'], 
     component_opts['collection']['paths']['index_data'], 
+    component_opts['collection']['paths']['index_data'] + '/db',
     'logs'
 ]
 

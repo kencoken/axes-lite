@@ -5,11 +5,12 @@
         "limas": "limas/",
         "axes-home": "axes-home/",
         "axes-research": "axes-research/",
-        "nginx": null
+        "nginx": "nginx/",
+        "mongodb": "mongodb/"
     },
     "collection": {
         "name": "cAXESOpen",
-        "url": "http://...",
+        "url": "http://<servername>:<nginx_port>/public",
         "paths": {
             "public_data": "public/",
             "private_data": "private/",
@@ -17,6 +18,9 @@
         }
     },
     "links": {
+        "mongodb": {
+            "server_port": 27017
+        }
         "cpuvisor-srv": {
             "server_port": 5555,
             "notify_port": 5556

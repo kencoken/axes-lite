@@ -13,7 +13,7 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=unix://supervisord.sock ; use a unix:// URL  for a unix socket
 
 [program:cpuvisor-srv]
-command=start.sh
+command=<CPUVISOR-SRV>/start.sh
 autostart=false
 directory=<CPUVISOR-SRV>
 
@@ -23,7 +23,7 @@ autostart=false
 directory=<LIMAS>/bin
 
 [program:imsearch-tools]
-command=python imsearch_http_service.py <IMSEARCH-TOOLS_PORT>
+command=<IMSEARCH-TOOLS>/start.sh
 autostart=false
 directory=<IMSEARCH-TOOLS>
 
@@ -37,11 +37,11 @@ command=<AXES-RESEARCH>/start.sh
 autostart=false
 directory=<AXES-RESEARCH>
 
-# [program:mongodb]
-# command=bin/mongod --dbpath <INDEX_PATH>/mongodb
-# autostart=false
-# directory=<MONGODB>
-#
+[program:mongodb]
+command=<MONGODB>/bin/mongod --port <MONGODB_PORT> --dbpath <INDEX_PATH>/db
+autostart=false
+directory=<MONGODB>
+
 [program:nginx]
 command=<NGINX>/sbin/nginx -c <NGINX>/conf/nginx.conf
 autostart=false

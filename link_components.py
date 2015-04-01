@@ -121,7 +121,7 @@ def prepare_limas(base_path, component_cfgs):
              collection['name']),
             ('<port under which the instance should run>',
              str(links['limas']['server_port'])),
-            ('<directory to external data>',
+            ('<directory to private data>',
              collection['paths']['private_data'])
         ]
 
@@ -139,7 +139,11 @@ def prepare_limas(base_path, component_cfgs):
             ('<CPUVISOR_PORT>',
              str(links['cpuvisor-srv']['server_port'])),
             ('<URL_TO_COLLECTION_PATH>',
-             collection['url'])
+             collection['url']),
+            ('<MONGODB_PORT>',
+             str(links['mongodb']['server_port'])),
+            ('<IMSEARCH_PORT>',
+             str(links['imsearch-tools']['server_port'])),
         ]
 
         with open('conf/conf-template.py', 'r') as src_f:
@@ -154,6 +158,9 @@ def prepare_supervisor(base_path, component_cfgs):
     components = component_cfgs['components']
 
     set_env_replace_patterns = [
+        # index path
+        ('<INDEX_PATH>',
+         component_cfgs['collection']['paths']['index_data']),
         # limas
         ('<LIMAS>',
          components['limas']),
@@ -180,6 +187,11 @@ def prepare_supervisor(base_path, component_cfgs):
         # NGINX
         ('<NGINX>',
          components['nginx'] or ''),
+        # MONGODB
+        ('<MONGODB>',
+         components['mongodb']),
+        ('<MONGODB_PORT>',
+         str(links['mongodb']['server_port'])),
     ]
 
     with open('templates/supervisor/supervisor.conf.template', 'r') as src_f:
