@@ -43,6 +43,7 @@ def import_python_module_from_path(path, module_name):
 
 @contextlib.contextmanager
 def change_cwd(path):
+
     old_cwd = os.getcwd()
     os.chdir(path)
 
@@ -77,8 +78,17 @@ def ensure_fname_path_exists(fname):
 
 
 def copy_replace(src, dst, repl):
+
     for line in src:
         for pat,rep in repl:
             if pat in line:
                 line = line.replace(pat, rep)
         dst.write(line)
+
+
+def write_template(templates_dir, infile, outfile, settings):
+    with open(os.path.join(templates_dir, infile)) as f:
+        template = f.read()
+    text = template.format(**settings)
+    with open(outfile, 'w') as f:
+        f.write(text)

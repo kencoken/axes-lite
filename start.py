@@ -1,6 +1,7 @@
-# start.py
-# ------------------
-# Start AXES-LITE server - see README.md for details
+#!/usr/bin/env python
+"""
+Start AXES-LITE server - see README.md for details
+"""
 
 import os
 import subprocess
