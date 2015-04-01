@@ -22,7 +22,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
     templates_dir = 'templates/cpuvisor-srv/'
     path = component_paths['cpuvisor-srv']
-    
+
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
 
@@ -48,7 +48,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     log.info('[cpuvisor] Preparing config...')
 
     template_config = os.path.join(templates_dir, 'config.prototxt')
-    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])  
+    output_config = os.path.join(component_paths['cpuvisor-srv'], 'config.%s.prototxt' % collection['name'])
 
     replace_patterns = {
         '<MODELS_PATH>': models_path,
@@ -69,7 +69,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     # prepare start
     log.info('[cpuvisor] Preparing start script...')
 
-    settings = { 'name': component_cfgs['collection']['name'] }
+    settings = {'name': component_cfgs['collection']['name']}
     #settings.update(component_cfgs)
 
     def write_template(infile, outfile):
@@ -83,7 +83,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
         outf = os.path.join(path, 'start.sh')
         write_template('start.sh', outf)
         os.chmod(outf, 0755)
-        
+
     write_start_script()
 
     # download models
@@ -244,7 +244,8 @@ def prepare_axes_home(base_path, component_cfgs):
     write_server_settings()
     write_nginx_config()
     write_start_script()
-    
+
+
 def prepare_axes_research(base_path, component_cfgs):
     component_paths = component_cfgs['components']
     links = component_cfgs['links']
@@ -252,7 +253,7 @@ def prepare_axes_research(base_path, component_cfgs):
     templates_dir = 'templates/axes-research/'
     path = component_paths['axes-research']
     limas_port = links['limas']['server_port']
-    
+
     def gen_django_secret_key():
         import random
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
@@ -265,14 +266,14 @@ def prepare_axes_research(base_path, component_cfgs):
         'secret_key': gen_django_secret_key()
     }
     settings.update(links['axes-research'])
-    
+
     def write_template(infile, outfile):
         with open(templates_dir + infile) as f:
             template = f.read()
         text = template.format(**settings)
         with open(outfile, 'w') as f:
             f.write(text)
-            
+
     def write_server_settings():
         outf = os.path.join(path, 'axesresearch/settings/local.py')
         write_template('local.py', outf)
@@ -285,11 +286,11 @@ def prepare_axes_research(base_path, component_cfgs):
         outf = os.path.join(path, 'start.sh')
         write_template('start.sh', outf)
         os.chmod(outf, 0755)
-        
+
     def ensure_dir(path):
         if not os.path.isdir(path):
             os.makedirs(path)
-            
+
     def collect_static_files():
         activate_cmd = ". ./venv/bin/activate"
         collect_cmd = "echo yes | python manage.py collectstatic"
@@ -298,7 +299,7 @@ def prepare_axes_research(base_path, component_cfgs):
             if os.path.isdir("venv"):
                 cmd = activate_cmd + " && " + collect_cmd
             os.system(cmd)
-    
+
     log.info('[axes-research] Preparing config...')
     ensure_dir(os.path.join(path, 'www/static'))
     ensure_dir(os.path.join(path, 'www/media'))
@@ -306,6 +307,7 @@ def prepare_axes_research(base_path, component_cfgs):
     collect_static_files()
     write_nginx_config()
     write_start_script()
+
 
 def prepare_imsearch_tools(base_path, component_cfgs):
 
@@ -333,8 +335,9 @@ def prepare_imsearch_tools(base_path, component_cfgs):
         outf = os.path.join(path, 'start.sh')
         write_template('start.sh', outf)
         os.chmod(outf, 0755)
-        
+
     write_start_script()
+
 
 def prepare_nginx(base_path, component_cfgs):
 
@@ -350,7 +353,7 @@ def prepare_nginx(base_path, component_cfgs):
         '<PUBLIC_DATA>': component_cfgs['collection']['paths']['public_data']
     }
     replace_patterns = list(replace_patterns.iteritems())
-    
+
     with open('templates/nginx/nginx.conf', 'r') as src_f:
         with open(os.path.join(components['nginx'], 'conf', 'nginx.conf'), 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, replace_patterns)
@@ -362,13 +365,13 @@ def main():
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
-    
+
     def prepare(name, func):
         path = component_cfgs['components'][name]
         if path and os.path.isdir(path):
             log.info('Preparing %s component...', name)
             func(file_dir, component_cfgs)
-     
+
     # Prepare components
     prepare('cpuvisor-srv', prepare_cpuvisor)
     prepare('limas', prepare_limas)

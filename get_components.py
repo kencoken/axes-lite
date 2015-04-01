@@ -11,11 +11,11 @@ from scaffoldutils import utils
 
 with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
     component_opts = json.load(f)
-    
-ensure_dirs = [ 
-    component_opts['collection']['paths']['private_data'], 
-    component_opts['collection']['paths']['public_data'], 
-    component_opts['collection']['paths']['index_data'], 
+
+ensure_dirs = [
+    component_opts['collection']['paths']['private_data'],
+    component_opts['collection']['paths']['public_data'],
+    component_opts['collection']['paths']['index_data'],
     component_opts['collection']['paths']['index_data'] + '/db',
     'logs'
 ]
@@ -44,7 +44,7 @@ def repo_clone(cmd, component, url, branch=None):
     if branch:
         with utils.change_cwd(path):
             cmd = ' '.join([cmd, 'checkout', branch])
-            subprocess.call(cmd, shell=True) 
+            subprocess.call(cmd, shell=True)
     return True
 
 def main():
@@ -57,6 +57,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-

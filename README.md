@@ -29,8 +29,8 @@ each of the components of the system. A template is provided for this purpose
 `config.json.template`, in which the location of each of the above
 components should be inserted.
 
-For convenience, a script is provided to download the components. To use this, 
-first create a `config.json` by copying and editing the template file 
+For convenience, a script is provided to download the components. To use this,
+first create a `config.json` by copying and editing the template file
 `config.json.template` and then run:
 
     $ python get_components.py
@@ -39,7 +39,7 @@ Once a copy has been obtained of each of the components, whether using
 the script or manually, the instructions in their respective `README` files
 should be followed to complete their individual installation along with their
 dependencies. Note for the user interfaces (axes-home and axes-research), it is
-only necessary to install their dependencies. 
+only necessary to install their dependencies.
 
 ### Preparing the demo dataset
 
@@ -80,12 +80,15 @@ Usage
     $ make
 
 ### Installing Mongodb
-    $ get download url fitting operation system under https://www.mongodb.org/downloads
-    $ wget <url>
+
+First, find the appropriate MongoDB package URL for your operating system `<MONGO_URL>`
+on the [MongoDB website](https://www.mongodb.org/downloads). Following this:
+
+    $ wget <MONGO_URL>
     $ tar xvzp -f mongodb*tgz
     $ rm mongodb*tgz
     $ mv mongodb* mongodb
-    
+
 
 ### Start with supervisor
 
