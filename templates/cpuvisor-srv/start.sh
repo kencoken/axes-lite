@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cd bin
-./cpuvisor_service ../config.{name}.prototxt
+cd utils
+./start_service.sh --config_path ../config.{name}.prototxt

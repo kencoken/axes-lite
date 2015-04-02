@@ -2,14 +2,14 @@
 # ------------------
 # Index data for use with AXES-LITE - see README.md for details
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger("index_data")
+
 import os
 import subprocess
 import argparse
 from scaffoldutils import utils
-
-import logging
-log = logging.getLogger(__name__)
-logging.basicConfig()
 
 
 def index_cpuvisor(base_path, component_cfgs):
@@ -18,6 +18,12 @@ def index_cpuvisor(base_path, component_cfgs):
     links = component_cfgs['links']
     collection = component_cfgs['collection']
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
+
+    # ensure index directory exists
+    try:
+        os.makedirs(index_dir)
+    except os.error:
+        pass
 
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
@@ -34,26 +40,38 @@ def index_cpuvisor(base_path, component_cfgs):
     dataset_feats_file = os.path.join(index_dir, 'dsetfeats_%s.binaryproto' % collection['name'])
 
     # generate filelist for dataset
-    log.info('[cpuvisor] Generating dataset filelist...')
-    cpuvisorutil.generate_imagelist(dataset_im_paths_file, dataset_keyframes_path)
+    if not os.path.exists(dataset_im_paths_file):
+        log.info('[cpuvisor] Generating dataset filelist...')
+        cpuvisorutil.generate_imagelist(dataset_im_paths_file, dataset_keyframes_path)
 
 
     # update config with paths
     log.info('[cpuvisor] Updating config with dataset paths...')
+    config_file_path = os.path.join(component_paths['cpuvisor-srv'],
+                                    'config.%s.prototxt' % collection['name'])
+
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
                                  'preproc_config.dataset_im_paths',
-                                 dataset_im_paths_file)
+                                 dataset_im_paths_file,
+                                 config_file_path)
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
                                  'preproc_config.dataset_im_base_path',
-                                 dataset_keyframes_path)
+                                 dataset_keyframes_path,
+                                 config_file_path)
     cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
                                  'preproc_config.dataset_feats_file',
-                                 dataset_feats_file)
+                                 dataset_feats_file,
+                                 config_file_path)
 
     # compute features for dataset
-    # log.info('[cpuvisor] Computing features for dataset...')
-    # with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-    #     subprocess.call(["cpuvisor_preproc", "--nonegfeats"])
+    if not os.path.exists(dataset_feats_file):
+        log.info('[cpuvisor] Computing features for dataset...')
+        with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+            utils.subproc_call_check([
+                './cpuvisor_preproc',
+                '--config_path', '../config.%s.prototxt' % component_cfgs['collection']['name'],
+                '--nonegfeats'
+            ])
 
 
 def index_limas(base_path, component_cfgs):

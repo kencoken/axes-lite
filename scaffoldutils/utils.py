@@ -6,10 +6,10 @@ import os
 import sys
 import json
 import contextlib
+import subprocess
 
 import logging
 log = logging.getLogger(__name__)
-logging.basicConfig()
 
 
 COMPONENT_CFGS_FILE = 'config.json'
@@ -77,18 +77,41 @@ def ensure_fname_path_exists(fname):
         pass
 
 
+def touch_dir(path, token):
+
+    fname = os.path.join(path, '.pytouch.' + token)
+    ensure_fname_path_exists(fname)
+
+    exists = os.path.exists(fname)
+
+    with open(fname, 'a'):
+        os.utime(fname, None)
+
+    return exists
+
+
 def copy_replace(src, dst, repl):
 
     for line in src:
         for pat,rep in repl:
             if pat in line:
                 line = line.replace(pat, rep)
+
         dst.write(line)
 
 
 def write_template(templates_dir, infile, outfile, settings):
+
     with open(os.path.join(templates_dir, infile)) as f:
         template = f.read()
+
     text = template.format(**settings)
+
     with open(outfile, 'w') as f:
         f.write(text)
+
+
+def subproc_call_check(cmd, shell=False):
+
+    if subprocess.call(cmd, shell=shell) != 0:
+        raise RuntimeError('Call ended with non-zero exit code!')

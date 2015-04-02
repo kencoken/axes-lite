@@ -3,14 +3,12 @@
 Link together components of AXES-LITE - see README.md for details
 """
 
-import os, stat
-import subprocess
-import shutil
-from scaffoldutils import utils
-
 import logging
-log = logging.getLogger(__name__)
-logging.basicConfig(filename='example.log', level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger("link_components")
+
+import os, stat
+from scaffoldutils import utils
 
 
 def prepare_cpuvisor(base_path, component_cfgs):
@@ -25,6 +23,9 @@ def prepare_cpuvisor(base_path, component_cfgs):
     cpuvisortls = utils.import_python_module_from_path(component_paths['cpuvisor-srv'],
                                                        'download_data')
 
+    if not os.path.exists(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+        raise RuntimeError('[cpuvisor] Missing bin directory - compile before running link_components!')
+
     # prepare endpoints and paths
 
     models_path = os.path.join(component_paths['cpuvisor-srv'], 'model_data')
@@ -32,7 +33,7 @@ def prepare_cpuvisor(base_path, component_cfgs):
     negimgs_path = os.path.join(component_paths['cpuvisor-srv'],
                                 'server_data', 'neg_images')
     negidx_path = os.path.join(component_paths['cpuvisor-srv'],
-                                'server_data', 'negpaths.txt')
+                               'negpaths.txt')
 
     negfeats_path = os.path.join(component_paths['cpuvisor-srv'],
                                  'server_data', 'negfeats.binaryproto')
@@ -79,21 +80,32 @@ def prepare_cpuvisor(base_path, component_cfgs):
 
     # download models
 
-    # log.info('[cpuvisor] Downloading models...')
-#     download_models(target_dir)
-#
-#     # download features for negative images
-#
-#     log.info('[cpuvisor] Attempting to download features for negative images...')
-#     if not cpuvisortls.download_neg_feats(negfeats_path):
-#
-#         # if no features could be downloaded, compute features using negative images instead
-#         log.info('[cpuvisor] Could not download negative features - downloading negative training images instead...')
-#         cpuvisortls.download_neg_images(negimgs_path)
-#
-#         log.info('[cpuvisor] Computing features for negative images...')
-#         with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
-#             subprocess.call(["cpuvisor_preproc", "--nodsetfeats"])
+    log.info('[cpuvisor] Getting models...')
+    cpuvisortls.download_models(models_path)
+
+    # download features for negative images
+
+    if os.path.exists(negfeats_path):
+
+        log.info('[cpuvisor] Negative feature file exists')
+
+    else:
+
+        log.info('[cpuvisor] Attempting to download features for negative images...')
+        if not cpuvisortls.download_neg_feats(negfeats_path):
+
+            # if no features could be downloaded, compute features using negative images instead
+            log.info('[cpuvisor] Could not download negative features - downloading negative training images instead...')
+            if not utils.touch_dir(negimgs_path, 'negimgs'):
+                cpuvisortls.download_neg_images(negimgs_path)
+
+            log.info('[cpuvisor] Computing features for negative images...')
+            with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+                utils.subproc_call_check([
+                    './cpuvisor_preproc',
+                    '--config_path', '../config.%s.prototxt' % component_cfgs['collection']['name'],
+                    '--nodsetfeats'
+                ])
 
 
 def prepare_limas(base_path, component_cfgs):

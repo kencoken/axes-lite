@@ -13,13 +13,8 @@ logging.basicConfig()
 
 
 def start_cpuvisor(base_path, component_cfgs):
-    with utils.change_cwd(os.path.join(component_cfgs['components']['cpuvisor-srv'], 'utils')):
-        subprocess.call('./start_service.sh', shell=True)
-
-
-def stop_cpuvisor(base_path, component_cfgs):
-    with utils.change_cwd(os.path.join(component_cfgs['components']['cpuvisor-srv'], 'utils')):
-        subprocess.call('./stop_service.sh', shell=True)
+    with utils.change_cwd(component_cfgs['components']['cpuvisor-srv']):
+        subprocess.call('./start.sh', shell=True)
 
 
 def start_imsearch_tools(base_path, component_cfgs):
@@ -50,11 +45,11 @@ if __name__ == "__main__":
     log.info('Starting cpuvisor-srv component...')
     start_cpuvisor(file_dir, component_cfgs)
 
-    log.info('Starting imsearch-tools component...')
-    start_imsearch_tools(file_dir, component_cfgs)
+    # log.info('Starting imsearch-tools component...')
+    # start_imsearch_tools(file_dir, component_cfgs)
 
-    log.info('Starting limas component...')
-    start_limas(file_dir, component_cfgs)
+    # log.info('Starting limas component...')
+    # start_limas(file_dir, component_cfgs)
 
-    log.info('Starting axes-home component...')
-    start_axes_home(file_dir, component_cfgs)
+    # log.info('Starting axes-home component...')
+    # start_axes_home(file_dir, component_cfgs)

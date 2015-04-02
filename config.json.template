@@ -12,8 +12,8 @@
         "name": "cAXESOpen",
         "url": "http://<servername>:<nginx_port>/public",
         "paths": {
-            "public_data": "public/",
-            "private_data": "private/",
+            "public_data": "cAXESOpenMini/",
+            "private_data": "cAXESOpenMini/",
             "index_data": "index/"
         }
     },
