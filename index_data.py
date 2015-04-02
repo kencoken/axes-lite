@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("index_data")
 
 import os
+import sys
 import subprocess
 import argparse
 from scaffoldutils import utils
@@ -123,16 +124,39 @@ def index_limas(base_path, component_cfgs):
 # main entry point
 # ................
 
-if __name__ == "__main__":
+def main(component_name=None):
 
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
     component_cfgs = utils.load_component_cfgs(file_dir)
 
-    if os.path.isdir(component_cfgs['components']['cpuvisor-srv']):
-        log.info('Indexing cpuvisor-srv component...')
-        index_cpuvisor(file_dir, component_cfgs)
+    def index(name, func):
+        path = component_cfgs['components'][name]
+        if path and os.path.isdir(path):
+            log.info('Indexing component: %s...', name)
+            func(file_dir, component_cfgs)
 
-    if os.path.isdir(component_cfgs['components']['limas']):
-        log.info('Indexing limas component...')
-        index_limas(file_dir, component_cfgs)
+    # Index components
+
+    components = {
+        'cpuvisor-srv': index_cpuvisor,
+        'limas': index_limas
+    }
+
+    if not component_name:
+        log.info('Indexing all components...')
+        for name, func in components.iteritems():
+            index(name, func)
+    else:
+        if component_name not in components:
+            raise RuntimeError('Could not find component: %s' % component_name)
+        index(component_name, components[component_name])
+
+
+if __name__ == "__main__":
+
+    component_name = None
+    if len(sys.argv) > 1:
+        component_name = sys.argv[1]
+
+    main(component_name)

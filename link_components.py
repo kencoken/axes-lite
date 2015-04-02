@@ -7,7 +7,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("link_components")
 
-import os, stat
+import os
+import sys
 from scaffoldutils import utils
 
 
@@ -322,7 +323,7 @@ def prepare_nginx(base_path, component_cfgs):
 # main entry point
 # ................
 
-def main():
+def main(component_name=None):
 
     log.info('Loading component configuration...')
     file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -331,21 +332,38 @@ def main():
     def prepare(name, func):
         path = component_cfgs['components'][name]
         if path and os.path.isdir(path):
-            log.info('Preparing %s component...', name)
+            log.info('Preparing component: %s...', name)
             func(file_dir, component_cfgs)
 
     # Prepare components
-    prepare('cpuvisor-srv', prepare_cpuvisor)
-    prepare('limas', prepare_limas)
-    prepare('axes-home', prepare_axes_home)
-    prepare('axes-research', prepare_axes_research)
-    prepare('imsearch-tools', prepare_imsearch_tools)
-    prepare('nginx', prepare_nginx)
 
-    # Prepare supervisor
-    log.info('Preparing supervisor configuration...')
-    prepare_supervisor(file_dir, component_cfgs)
+    components = {
+        'cpuvisor-srv': prepare_cpuvisor,
+        'limas': prepare_limas,
+        'axes-home': prepare_axes_home,
+        'axes-research': prepare_axes_research,
+        'imsearch-tools': prepare_imsearch_tools,
+        'nginx': prepare_nginx
+    }
+
+    if not component_name:
+        log.info('Linking all components...')
+        for name, func in components.iteritems():
+            prepare(name, func)
+
+        # Prepare supervisor
+        log.info('Preparing supervisor configuration...')
+        prepare_supervisor(file_dir, component_cfgs)
+    else:
+        if component_name not in components:
+            raise RuntimeError('Could not find component: %s' % component_name)
+        prepare(component_name, components[component_name])
 
 
 if __name__ == "__main__":
-    main()
+
+    component_name = None
+    if len(sys.argv) > 1:
+        component_name = sys.argv[1]
+
+    main(component_name)
