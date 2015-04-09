@@ -11,3 +11,5 @@
 /supervisor.pid
 /supervisor.sock
 /venv/
+/cAXESOpen/
+/cAXESOpenMini/

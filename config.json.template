@@ -12,15 +12,15 @@
         "name": "cAXESOpen",
         "url": "http://<servername>:<nginx_port>/public",
         "paths": {
-            "public_data": "public/",
-            "private_data": "private/",
+            "public_data": "cAXESOpenMini/",
+            "private_data": "cAXESOpenMini/",
             "index_data": "index/"
         }
     },
     "links": {
         "mongodb": {
             "server_port": 27017
-        }
+        },
         "cpuvisor-srv": {
             "server_port": 5555,
             "notify_port": 5556
@@ -37,7 +37,7 @@
         "axes-home": {
             "server_port": 8085,
             "debug": true,
-            "mount_point": "/axes/home",
+            "mount_point": "/axes/home"
         },
         "axes-research": {
             "server_port": 8086,
@@ -50,6 +50,6 @@
             "registration_code": "",
             "time_zone": "Europe/Dublin"
         }
-        
+
     }
 }

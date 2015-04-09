@@ -11,11 +11,11 @@ from scaffoldutils import utils
 
 with open(utils.COMPONENT_CFGS_FILE, 'r') as f:
     component_opts = json.load(f)
-    
-ensure_dirs = [ 
-    component_opts['collection']['paths']['private_data'], 
-    component_opts['collection']['paths']['public_data'], 
-    component_opts['collection']['paths']['index_data'], 
+
+ensure_dirs = [
+    component_opts['collection']['paths']['private_data'],
+    component_opts['collection']['paths']['public_data'],
+    component_opts['collection']['paths']['index_data'],
     component_opts['collection']['paths']['index_data'] + '/db',
     'logs'
 ]
@@ -28,9 +28,11 @@ component_repos = [
     ('git', 'axes-research', 'https://github.com/kevinmcguinness/axes-research.git'),
 ]
 
+
 def ensure_dir(path):
     if not os.path.isdir(path):
         os.mkdir(path)
+
 
 def repo_clone(cmd, component, url, branch=None):
     default_val = '<PATH>'
@@ -44,8 +46,12 @@ def repo_clone(cmd, component, url, branch=None):
     if branch:
         with utils.change_cwd(path):
             cmd = ' '.join([cmd, 'checkout', branch])
-            subprocess.call(cmd, shell=True) 
+            subprocess.call(cmd, shell=True)
     return True
+
+
+# main entry point
+# ................
 
 def main():
     # Create dirs
@@ -55,8 +61,6 @@ def main():
     for repo in component_repos:
         repo_clone(*repo)
 
+
 if __name__ == '__main__':
     main()
-
-
-
