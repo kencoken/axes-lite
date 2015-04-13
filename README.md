@@ -107,9 +107,14 @@ If you do not already have mongodb running, start them with supervisorctl:
 Start all the components:
 
     $ supervisorctl start components:*
+    
+And start the AXES home interface:
 
-You can check on the status of the system components with the using
-supervisor's status command:
+    $ supervisorctl start axes-home
+    
+Or you can start the AXES research interface by using `axes-research` instead
+of `axes-home` in the above. You can check on the status of the system
+components with the using supervisor's status command:
 
     $ supervisorctl status
     
