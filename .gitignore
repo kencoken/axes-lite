@@ -6,10 +6,11 @@
 /axes-research/
 /imsearch-tools/
 /nginx.conf
-/supervisor.conf
-/supervisor.log
-/supervisor.pid
-/supervisor.sock
+/supervisord.conf
+/supervisord.log
+/supervisord.pid
+/supervisord.sock
+/start_support.sh
 /venv/
 /cAXESOpen/
 /cAXESOpenMini/

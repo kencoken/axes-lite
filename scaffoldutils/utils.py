@@ -66,6 +66,11 @@ def load_component_cfgs(base_path):
         if value and not os.path.isabs(value):
             component_cfgs['collection']['paths'][key] = os.path.normpath(os.path.join(base_path, value))
 
+    # replace <nginx_port> token in collection->url with links->nginx->server_port
+    coll_url = component_cfgs['collection']['url']
+    coll_url = coll_url.replace('<nginx_port>', str(component_cfgs['links']['nginx']['server_port']))
+    component_cfgs['collection']['url'] = coll_url
+
     return component_cfgs
 
 

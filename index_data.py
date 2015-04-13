@@ -96,6 +96,7 @@ def index_limas(base_path, component_cfgs):
         subprocess.call(cmd)
 
         # index video-level metatada
+        print os.path.join(data['private_data'], 'metadata')
         subprocess.call(["scripts/integration/index_meta.py",
                          conf_fn,
                          collection,

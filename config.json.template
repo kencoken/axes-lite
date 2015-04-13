@@ -10,7 +10,7 @@
     },
     "collection": {
         "name": "cAXESOpen",
-        "url": "http://<servername>:<nginx_port>/public",
+        "url": "http://localhost:<nginx_port>/public",
         "paths": {
             "public_data": "cAXESOpenMini/",
             "private_data": "cAXESOpenMini/",
@@ -35,12 +35,19 @@
             "server_port": 8080
         },
         "axes-home": {
-            "server_port": 8085,
+            "server_port": 8085
+        },
+        "axes-research": {
+            "server_port": 8086
+        }
+
+    },
+    "config": {
+        "axes-home": {
             "debug": true,
             "mount_point": "/axes/home"
         },
         "axes-research": {
-            "server_port": 8086,
             "debug": true,
             "mount_point": "/axes/research",
             "admin_name": "Admin",
@@ -50,6 +57,5 @@
             "registration_code": "",
             "time_zone": "Europe/Dublin"
         }
-
     }
 }
