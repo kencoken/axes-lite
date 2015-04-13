@@ -157,7 +157,8 @@ def prepare_limas(base_path, component_cfgs):
     def write_start_script():
         outf = os.path.join(path, 'start.sh')
         utils.write_template(templates_dir, 'start.sh', outf,
-                             {'base_dir': path,
+                             {'server_port': links['limas']['server_port'],
+                              'base_dir': path,
                               'name': component_cfgs['collection']['name']})
         os.chmod(outf, 0755)
 
@@ -357,12 +358,8 @@ def prepare_supervisor(base_path, component_cfgs):
     set_env_replace_patterns = {
         '<INDEX_PATH>': component_cfgs['collection']['paths']['index_data'],
         '<LIMAS>': components['limas'],
-        '<LIMAS_PORT>': str(links['limas']['server_port']),
-        '<LIMAS_CONF>': os.path.join(components['limas'], 'conf', collection + '.py'),
         '<CPUVISOR-SRV>': components['cpuvisor-srv'],
-        '<CPUVISOR-SRV_PORT>': str(links['cpuvisor-srv']['server_port']),
         '<IMSEARCH-TOOLS>': components['imsearch-tools'],
-        '<IMSEARCH-TOOLS_PORT>': str(links['imsearch-tools']['server_port']),
         '<AXES-HOME>': components['axes-home'],
         '<AXES-RESEARCH>': components['axes-research'],
         '<NGINX>': components['nginx'] or '',

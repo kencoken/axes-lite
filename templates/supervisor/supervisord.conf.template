@@ -22,11 +22,11 @@ priority=2
 directory=<CPUVISOR-SRV>
 
 [program:limas]
-command=<LIMAS>/bin/limas webstart <LIMAS_PORT> <LIMAS_CONF>
+command=<LIMAS>/start.sh
 autostart=false
 priority=3
 startsecs=10
-directory=<LIMAS>/bin
+directory=<LIMAS>
 
 [program:imsearch-tools]
 command=<IMSEARCH-TOOLS>/start.sh
