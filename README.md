@@ -152,10 +152,10 @@ Starting the system
 -------------------
 
 There are two methods for starting the web service once the above steps have been
-completed, a simpler method useful for testing/debugging, and a more advanced
-method based on the [supervisord Process Control system](http://supervisord.org).
+completed, a simpler method useful for testing/debugging, and a second method which
+uses the [Supervisor Process Control system](http://supervisord.org).
 
-### Quick and dirty launch
+### Option 1: Quick and dirty launch
 
 A script is provided in this directory which can be called directly with the name
 of the frontend to use (either `axes-home` or `axes-lite`). For example, to
@@ -176,37 +176,42 @@ the screen instance using `Ctl-a d` and reattach at a later time by issuing
 killed by issuing `$ screen -S axes-lite -X quit`.
 
 Note that this script assumes that you have launched MongoDB and NGINX services
-separately on the ports specified in `config.json`. If both are being managed by
-AXES-LITE (i.e. the paths specified in the components section of `config.json`
-for each is valid) then you can launch these by issuing:
+separately on the ports specified in `config.json`. If this is not the case, it is
+recommended you use Supervisor as described in the following section to launch
+these services most simply.
+
+Nonetheless, for convenience a utility script is also provided which will start
+the MongoDB and NGINX services using the paths specified in `config.json` within
+a screen instance if required, which may be useful for debugging purposes:
 
     $ ./start_support.sh
 
-Alternatively, use supervisord as described below to launch these services.
+### Option 2: Launching using Supervisor
 
-### Advanced launching using supervisord
-
-Supervisord provides a fully featured process management system which helps to
+Supervisor provides a fully featured process management system which helps to
 manage and control a collection of services in the background, offering advanced
 functionality such as the automatic restarting of processes that crash etc.
 
-If you do not have supervisord already, it can be installed as follows:
+If you do not have Supervisor already, it can be installed as follows:
 
     $ pip install supervisor
 
-After completing the preparation steps in the previous section, using supervisord
+After completing the preparation steps in the previous section, using Supervisor
 to launch AXES-LITE is relatively straightforward.
 
 ##### Starting the system
 
-Note: The following assumes you are running supervisor from the axes-lite
+Note: The following assumes you are running Supervisor from the axes-lite
 directory. If not, add `-c /path/to/supervisord.conf` to the commands below.
 
-Start the supervisor demon process:
+Start the Supervisor demon process:
 
     $ supervisord
 
-If you do not already have MongoDB and NGINX running, start them with supervisorctl:
+This will start the Supervisor daemon process using the `supervisord.conf` configuration
+file in the current directory.
+
+If you do not already have MongoDB and NGINX running, start them with `supervisorctl`:
 
     $ supervisorctl start mongodb nginx
 
@@ -214,11 +219,11 @@ Start all the components:
 
     $ supervisorctl start components:*
 
-And start the AXES home interface:
+And start the AXES-Home interface:
 
     $ supervisorctl start axes-home
 
-Or you can start the AXES research interface by using `axes-research` instead
+Or you can start the AXES-Research interface by using `axes-research` instead
 of `axes-home` in the above. You can check on the status of the system
 components with the using supervisor's status command:
 
@@ -229,13 +234,16 @@ check these log files if any component fails to start.
 
 ##### Stopping the system
 
-Run the following to shutdown supervisor:
+Run the following to shutdown Supervisor:
 
     $ supervisorctl shutdown
 
+This will terminate the Supervisor daemon launched in the previous section,
+and stop all running services.
+
 ##### Starting and stopping individual components
 
-You can restart and individual component using supervisor's restart command.
+You can restart and individual component using Supervisor's restart command.
 For example, to restart the AXES home user interface, run:
 
     $ supervisorctl restart axes-home
