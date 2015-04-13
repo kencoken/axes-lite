@@ -91,6 +91,47 @@ Then we can index for a given dataset:
 
     $ python index_data.py
 
+### Starting the system
+
+Note: The following assumes you are running supervisor from the axes-lite
+directory. If not, add `-c /path/to/supervisord.conf` to the commands below.
+
+Start the supervisor demon process:
+
+    $ supervisord
+
+If you do not already have mongodb running, start them with supervisorctl:
+
+    $ supervisorctl start mongodb nginx
+
+Start all the components:
+
+    $ supervisorctl start components:*
+
+You can check on the status of the system components with the using
+supervisor's status command:
+
+    $ supervisorctl status
+    
+Each of the components writes log files to the `logs` subdirectory. You should
+check these log files if any component fails to start.
+
+### Stopping the system
+
+Run the following to shutdown supervisor:
+
+    $ supervisorctl shutdown
+
+### Starting and stopping individual components
+
+You can restart and individual component using supervisor's restart command.
+For example, to restart the AXES home user interface, run:
+
+    $ supervisorctl restart axes-home
+
+Components can also be stopped and started manually using the `stop` and `start`
+commands.
+
 **TODO: Add details of sample data here**
 
 Usage
@@ -123,5 +164,5 @@ on the [MongoDB website](https://www.mongodb.org/downloads). Following this:
     $ virtualenv venv
     $ . venv/bin/activate
     (venv) $ pip install supervisor
-    (venv) $ supervisor -c supervisor.conf
-    (venv) $ supervisor -c supervisor.conf start all
+    (venv) $ supervisord
+    (venv) $ supervisorctl start all

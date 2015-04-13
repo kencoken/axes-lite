@@ -173,8 +173,8 @@ def prepare_supervisor(base_path, component_cfgs):
     }
     set_env_replace_patterns = list(set_env_replace_patterns.iteritems())
 
-    with open(os.path.join('templates', 'supervisor', 'supervisor.conf.template'), 'r') as src_f:
-        with open('supervisor.conf', 'w') as dst_f:
+    with open(os.path.join('templates', 'supervisor', 'supervisord.conf.template'), 'r') as src_f:
+        with open('supervisord.conf', 'w') as dst_f:
             utils.copy_replace(src_f, dst_f, set_env_replace_patterns)
 
 
