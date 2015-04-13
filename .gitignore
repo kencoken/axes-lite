@@ -11,6 +11,7 @@
 /supervisord.pid
 /supervisord.sock
 /start_support.sh
+/logs/
 /venv/
 /cAXESOpen/
 /cAXESOpenMini/
