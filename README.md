@@ -15,6 +15,8 @@ Currently the following components are supported:
 Installation Instructions
 -------------------------
 
+It is not necessary to use both the AXES home and AXES research user interfaces, although it is possible to do so. The following instructions will install them both.
+
 ### Prerequisites
 
 First, the following components must be installed:
@@ -38,13 +40,34 @@ first create a `config.json` by copying and editing the template file
 Once a copy has been obtained of each of the components, whether using
 the script or manually, the instructions in their respective `README` files
 should be followed to complete their individual installation along with their
-dependencies. 
+dependencies.
 
-Please note the following for the installation
-* For the user interfaces (axes-home and axes-research), it is
- only necessary to install their dependencies. 
-* For limas to run you only need to execute step 2. from the installation procedure -
- running -- essentially ``mvn install`` 
+### Installing LIMAS
+
+For limas to run you only need to execute step 2 from the installation
+procedure:
+
+    $ cd limas
+    $ mvn install
+
+### Installing the AXES home interface
+
+Only the dependencies for AXES home need to be installed manually. To install
+them in a Python virtual environment, run the following commands:
+
+    $ cd axes-home/server
+    $ virtualenv venv
+    $ . ./venv/bin/activate
+    $ pip install -r requirements.txt
+
+### Installing the AXES research interface
+
+Only the dependencies for AXES research need to be installed manually, which
+can be accomplished as follows:
+
+    $ cd axes-research
+    $ cp axesresearch/settings/local.py.tmpl axesresearch/settings/local.py
+    $ ./bootstrap.sh
 
 ### Preparing the demo dataset
 
