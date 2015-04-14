@@ -2,7 +2,7 @@
 
 ARGS="--log-level INFO axesresearch.settings.production"
 if [ "{debug}" = "True" ]; then
-    ARGS="--log-level DEBUG --debug axesresearch.settings.dev"
+    ARGS="--log-level DEBUG axesresearch.settings.dev"
 fi
 
 # Activate virtual env if there is one
@@ -13,6 +13,6 @@ fi
 # Run gunicorn
 gunicorn_django --pythonpath . \
   -k gevent --log-file=- -t 120 \
-  -b localhost:{server_port} $ARGS 
+  -b localhost:{server_port} $ARGS
 
 cd $OLDPWD
