@@ -344,8 +344,19 @@ def prepare_start_script(base_path, component_cfgs):
                               'nginx_config': os.path.join(components['nginx'], 'conf', 'nginx.conf')})
         os.chmod(outf, 0755)
 
+    def write_axeslite_start_script():
+        outf = os.path.join(path, 'start.sh')
+        utils.write_template(templates_dir, 'start.sh', outf,
+                             {'cpuvisor-srv_path': components['cpuvisor-srv'],
+                              'imsearch-tools_path': components['imsearch-tools'],
+                              'limas_path': components['limas'],
+                              'axes-home_path': components['axes-home'],
+                              'axes-research_path': components['axes-research']})
+        os.chmod(outf, 0755)
+
     write_mongo_start_script()
     write_nginx_start_script()
+    write_axeslite_start_script()
 
 
 def prepare_supervisor(base_path, component_cfgs):
