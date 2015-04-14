@@ -1,4 +1,5 @@
 *.pyc
+.DS_Store
 /config.json
 /cpuvisor-srv/
 /limas/
@@ -8,6 +9,7 @@
 /nginx/
 /mongodb/
 /nginx.conf
+/nginx.pid
 /supervisord.conf
 /supervisord.log
 /supervisord.pid
