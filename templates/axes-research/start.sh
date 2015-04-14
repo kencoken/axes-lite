@@ -2,7 +2,7 @@
 
 ARGS="--log-level INFO --env DJANGO_SETTINGS_MODULE=axesresearch.settings.production"
 if [ "{debug}" = "True" ]; then
-    ARGS="--log-level DEBUG --debug --env DJANGO_SETTINGS_MODULE=axesresearch.settings.dev"
+    ARGS="--log-level DEBUG --env DJANGO_SETTINGS_MODULE=axesresearch.settings.dev"
 fi
 
 # Activate virtual env if there is one
