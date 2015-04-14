@@ -99,6 +99,7 @@ itself (for which the
 may be useful) this is a case of simply issuing from within the cpuvisor-srv
 directory:
 
+    $ cd cpuvisor-srv
     $ mkdir build
     $ cd build
     $ cmake ../
@@ -132,16 +133,33 @@ can be accomplished as follows:
     $ cp axesresearch/settings/local.py.tmpl axesresearch/settings/local.py
     $ ./bootstrap.sh
 
+Getting some Data
+-----------------
+
+The AXES-LITE system requires a collection of visual data which will be used
+as the target dataset for its multimedia search components. This data must be
+in the format specified in the *Indexing* section of the
+[LIMAS README file](https://bitbucket.org/alyr/limas).
+
 ### Preparing the demo dataset
 
 To experiment with the system, a small demo dataset consisting of two videos
-is provided. It can be obtained as follows:
+is provided in the correct format. It can be obtained as follows:
 
     $ wget http://axis.ewi.utwente.nl/collections/cAXESOpen/cAXESOpenMini.tgz
     $ tar xvzp -f cAXESOpenMini.tgz
 
 This will create a `cAXESOpenMini` folder in the axes-lite directory. Please
 specify this path both as private and as public data set in `config.json`.
+
+### Running over custom data
+
+The `cAXESOpenMini` dataset provides an example of the required format for your
+own datasets. Given a set of videos, LIMAS provides a set of scripts to generate
+the required metadata. However, a shot extractor must be used to generate the
+keyframes required in the `keyframes/` directory of any new collection.
+
+** TODO: Add a note about shot extraction here? **
 
 Linking the Components Together
 -------------------------------
@@ -154,6 +172,15 @@ specified in `config.json`, we first link the systems together:
 Then we can index for a given dataset:
 
     $ python index_data.py
+
+The indexing step can take some time depending on how fast your system is and
+the size of the target data (specified in the *collection* section of `config.json`)
+as the visual features for all keyframes must be computed. Typically, this will take
+anywhere from 0.3-1 second per image.
+
+For the sample `cAXESOpenMini` data described in the previous section, by default
+precomputed features will be downloaded from the web instead to save time and
+allow a demonstration system to be setup relatively quickly even on a slower system.
 
 Starting the system
 -------------------
