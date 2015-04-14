@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ARGS="--log-level INFO axesresearch.settings.production"
+ARGS="--log-level INFO --env DJANGO_SETTINGS_MODULE=axesresearch.settings.production"
 if [ "{debug}" = "True" ]; then
-    ARGS="--log-level DEBUG --debug axesresearch.settings.dev"
+    ARGS="--log-level DEBUG --debug --env DJANGO_SETTINGS_MODULE=axesresearch.settings.dev"
 fi
 
 # Activate virtual env if there is one
@@ -11,8 +11,10 @@ if [ -d "venv" ]; then
 fi
 
 # Run gunicorn
-gunicorn_django --pythonpath . \
-  -k gevent --log-file=- -t 120 \
-  -b localhost:{server_port} $ARGS 
+gunicorn axesresearch.wsgi --pythonpath . \
+    -k gevent \
+    --log-file=- \
+    -t 120 \
+    -b localhost:{server_port} $ARGS 
 
 cd $OLDPWD
