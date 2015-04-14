@@ -7,6 +7,8 @@ import sys
 import json
 import contextlib
 import subprocess
+import shutil
+import tempfile
 
 import logging
 log = logging.getLogger(__name__)
@@ -50,6 +52,14 @@ def change_cwd(path):
     yield
 
     os.chdir(old_cwd)
+
+
+@contextlib.contextmanager
+def make_temp_directory():
+
+    temp_dir = tempfile.mkdtemp()
+    yield temp_dir
+    shutil.rmtree(temp_dir)
 
 
 def load_component_cfgs(base_path):

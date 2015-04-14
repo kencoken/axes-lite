@@ -10,6 +10,8 @@ import os
 import sys
 import subprocess
 import argparse
+import tarfile
+import urlparse
 from scaffoldutils import utils
 
 
@@ -64,15 +66,51 @@ def index_cpuvisor(base_path, component_cfgs):
                                  dataset_feats_file,
                                  config_file_path)
 
-    # compute features for dataset
-    if not os.path.exists(dataset_feats_file):
+    # compute/download features for dataset
+
+    def download_feats(collection_name, fname):
+
+        precomputed_feat_urls = {
+            'cAXESOpen': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetfeats_cAXESOpen_VGG_CNN_M_128.tgz'
+        }
+
+        if collection_name not in precomputed_feat_urls:
+            return False
+        else:
+            url = precomputed_feat_urls[collection_name]
+            log.info('[cpuvisor] Downloading features for dataset...')
+            log.info('[cpuvisor] URL is: %s' % url)
+
+            (target_path, target_fname) = os.path.split(fname)
+
+            with make_temp_directory() as temp_dir:
+                tarball_file_ext = os.path.splitext(urlparse.urlparse(url).path)[1]
+                tarball_fname = os.path.join(temp_dir, 'feats' + tarball_file_ext)
+                utils.subproc_call_check(['wget -O %s %s' % (tarball_fname, url)], shell=True)
+
+                with tarfile.open(tarball_fname) as tar:
+                    tar_ifos = {x.name: x for x in tar.getmembers()}
+
+                    if target_fname not in tar_ifos:
+                        raise RuntimeError('Precomputed feature tarball does not contain required file')
+                    else:
+                        tar.extractall(target_path, [tar_ifos[target_fname]])
+                        return True
+
+    def compute_feats(base_dir, collection_name):
+
         log.info('[cpuvisor] Computing features for dataset...')
-        with utils.change_cwd(os.path.join(component_paths['cpuvisor-srv'], 'bin')):
+        with utils.change_cwd(os.path.join(base_dir, 'bin')):
             utils.subproc_call_check([
                 './cpuvisor_preproc',
-                '--config_path', '../config.%s.prototxt' % component_cfgs['collection']['name'],
+                '--config_path', '../config.%s.prototxt' % collection_name,
                 '--nonegfeats'
             ])
+
+    if not os.path.exists(dataset_feats_file):
+        if not download_feats(collection['name'], fname):
+            compute_feats(component_paths['cpuvisor-srv'],
+                          component_cfgs['collection']['name'])
 
 
 def index_limas(base_path, component_cfgs):
