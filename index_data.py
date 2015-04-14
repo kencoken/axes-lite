@@ -83,7 +83,7 @@ def index_cpuvisor(base_path, component_cfgs):
 
             (target_path, target_fname) = os.path.split(fname)
 
-            with make_temp_directory() as temp_dir:
+            with utils.make_temp_directory() as temp_dir:
                 tarball_file_ext = os.path.splitext(urlparse.urlparse(url).path)[1]
                 tarball_fname = os.path.join(temp_dir, 'feats' + tarball_file_ext)
                 utils.subproc_call_check(['wget -O %s %s' % (tarball_fname, url)], shell=True)
@@ -108,7 +108,7 @@ def index_cpuvisor(base_path, component_cfgs):
             ])
 
     if not os.path.exists(dataset_feats_file):
-        if not download_feats(collection['name'], fname):
+        if not download_feats(collection['name'], dataset_feats_file):
             compute_feats(component_paths['cpuvisor-srv'],
                           component_cfgs['collection']['name'])
 
