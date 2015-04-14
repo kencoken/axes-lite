@@ -1,6 +1,12 @@
 AXES-LITE
 =========
 
+Authors:
+
+ + Ken Chatfield, University of Oxford - <ken@robots.ox.ac.uk>
+ + Kevin McGuinness, Dublin City University - <kevin.mcguinness@eeng.dcu.ie>
+ + Robin Aly, University of Twente - <r.aly@utwente.nl>
+
 Copyright 2015, all rights reserved.
 
 Release: v0.1 (April 2015)
@@ -14,9 +20,11 @@ visual and multimedia search services developed as part of the
 and AXES-Home/AXES-Research web frontend to provide a fully-working
 multimedia retrieval system over any dataset of video data.
 
-Currently the following multimedia search components are supported:
+![AXES-LITE Architecture](resources/architecture.png)
 
- - `cpuvisor-srv` - Visual category search from the University of Oxford
+Currently the following core components are supported:
+
+ - `cpuvisor-srv` - On-the-fly visual category search from the University of Oxford
  - `uberclassifiers` - Uberclassifiers from KU Leuven
 
 Dependencies
