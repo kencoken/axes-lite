@@ -10,7 +10,8 @@
 /supervisord.log
 /supervisord.pid
 /supervisord.sock
-/start_support.sh
+/start_mongo.sh
+/start_nginx.sh
 /logs/
 /venv/
 /cAXESOpen/

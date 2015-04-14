@@ -151,53 +151,48 @@ Then we can index for a given dataset:
 Starting the system
 -------------------
 
-There are two methods for starting the web service once the above steps have been
-completed, a simpler method useful for testing/debugging, and a second method which
-uses the [Supervisor Process Control system](http://supervisord.org).
+Once the above steps have been completed, the web service can be launched.
 
-### Option 1: Quick and dirty launch
+It is recommended to do this with the
+[Supervisor Process Control system](http://supervisord.org) as this offers
+advanced functionality such as control over individual components and service
+monitoring (see the section below on how to do so). However, for debugging
+purposes and simple usage, a set of shell scripts is also provided.
 
-A script is provided in this directory which can be called directly with the name
-of the frontend to use (either `axes-home` or `axes-lite`). For example, to
-launch all components using the `axes-home` frontend:
+First, ensure MongoDB and NGINX dependencies are up and running in two separate
+shell windows. If you have installed both to the location specified in
+`conf.json`, then `link_components.py` will generate two utility scripts that
+will do this for you:
+
+    $ ./start_mongo.sh
+    $ ./start_nginx.sh
+
+Following this, run the start script:
 
     $ ./start.sh axes-home
 
-Replace `axes-home` with `axes-research` in the above to launch the AXES-Research
-frontend instead.
+Which will launch all components using AXES-Home as the web frontend. Replace `axes-home`
+with `axes-research` to use the AXES-Research frontend instead.
 
-This will launch a [GNU Screen instance](http://en.wikipedia.org/wiki/GNU_Screen)
-within the current shell within which all configured components will be started.
+The result will be a [GNU Screen instance](http://en.wikipedia.org/wiki/GNU_Screen)
+within the current shell within which all configured components will be started,
+which can be used to monitor the output of each of the components interactively.
+Use `Ctrl+a d` to detach from the screen session and leave it running in the background.
 
-You can switch between views to see log messages from the various services by
-issuing `Ctl-a n` and `Ctl-a p` within the shell. You can also detach from
-the screen instance using `Ctl-a d` and reattach at a later time by issuing
-`$ screen -r axes-lite` from the command prompt. The screen instance can be
-killed by issuing `$ screen -S axes-lite -X quit`.
-
-Note that this script assumes that you have launched MongoDB and NGINX services
-separately on the ports specified in `config.json`. If this is not the case, it is
-recommended you use Supervisor as described in the following section to launch
-these services most simply.
-
-Nonetheless, for convenience a utility script is also provided which will start
-the MongoDB and NGINX services using the paths specified in `config.json` within
-a screen instance if required, which may be useful for debugging purposes:
-
-    $ ./start_support.sh
-
-### Option 2: Launching using Supervisor
+### Launching using Supervisor (recommended)
 
 Supervisor provides a fully featured process management system which helps to
 manage and control a collection of services in the background, offering advanced
-functionality such as the automatic restarting of processes that crash etc.
+functionality such as the automatic restarting of crashed processes, service
+monitoring and much more.
 
 If you do not have Supervisor already, it can be installed as follows:
 
     $ pip install supervisor
 
 After completing the preparation steps in the previous section, using Supervisor
-to launch AXES-LITE is relatively straightforward.
+to launch AXES-LITE is also relatively straightforward, and follows a daemon
+pattern similar to `init.d` and other standard unix tools.
 
 ##### Starting the system
 

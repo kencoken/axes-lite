@@ -329,17 +329,23 @@ def prepare_start_script(base_path, component_cfgs):
     # prepare start script
     log.info('Preparing sample start script...')
 
-    def write_start_script():
-        outf = os.path.join(path, 'start_support.sh')
-        utils.write_template(templates_dir, 'start_support.sh', outf,
+    def write_mongo_start_script():
+        outf = os.path.join(path, 'start_mongo.sh')
+        utils.write_template(os.path.join(templates_dir, 'mongodb'), 'start_mongo.sh', outf,
                              {'mongo_path': components['mongodb'],
                               'mongo_port': links['mongodb']['server_port'],
-                              'mongo_dbpath': os.path.join(component_cfgs['collection']['paths']['index_data'], 'db'),
-                              'nginx_path': components['nginx'],
+                              'mongo_dbpath': os.path.join(component_cfgs['collection']['paths']['index_data'], 'db')})
+        os.chmod(outf, 0755)
+
+    def write_nginx_start_script():
+        outf = os.path.join(path, 'start_nginx.sh')
+        utils.write_template(os.path.join(templates_dir, 'nginx'), 'start_nginx.sh', outf,
+                             {'nginx_path': components['nginx'],
                               'nginx_config': os.path.join(components['nginx'], 'conf', 'nginx.conf')})
         os.chmod(outf, 0755)
 
-    write_start_script()
+    write_mongo_start_script()
+    write_nginx_start_script()
 
 
 def prepare_supervisor(base_path, component_cfgs):
