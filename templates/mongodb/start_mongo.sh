@@ -1,3 +1,3 @@
 #!/bin/bash
 
-{mongo_path}/mongod --port {mongo_port} --dbpath {mongo_dbpath}
+{mongo_path}/bin/mongod --port {mongo_port} --dbpath {mongo_dbpath}

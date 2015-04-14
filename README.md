@@ -38,6 +38,7 @@ follows:
     $ cd nginx
     $ ./configure --prefix=$PWD
     $ make
+    $ make install
 
 
 ##### 2. MongoDB
@@ -140,7 +141,8 @@ Getting some Data
 The AXES-LITE system requires a collection of visual data which will be used
 as the target dataset for its multimedia search components. This data must be
 in the format specified in the *Indexing* section of the
-[LIMAS README file](https://bitbucket.org/alyr/limas).
+[LIMAS README file](https://bitbucket.org/alyr/limas) and it's location is specified
+in `config.json` in the *collections* section.
 
 ### Preparing the demo dataset
 
@@ -171,7 +173,14 @@ specified in `config.json`, we first link the systems together:
 
     $ python link_components.py
 
-Then we can index for a given dataset:
+The linking step generates the component-specific configuration files. Following this,
+we are reday for indexing of our target data.
+
+First, we must ensure MongoDB is running, as it is required for LIMAS indexing. This
+can be done either manually, ensuring it runs on the same port as specified in `config.json`,
+or using the utility script `./start_mongo.sh` which is generated during the linking stage
+(see the next section for other ways of starting MongoDB). Following this, indexing
+can be initiated for a given dataset:
 
     $ python index_data.py
 
@@ -183,6 +192,10 @@ anywhere from 0.3-1 second per image.
 For the sample `cAXESOpenMini` data described in the previous section, by default
 precomputed features will be downloaded from the web instead to save time and
 allow a demonstration system to be setup relatively quickly even on a slower system.
+
+Note that the indexing script can be rerun again if you later change `config.json`
+to specify a different target dataset, but only a single target dataset can
+be specified at a time.
 
 Starting the system
 -------------------
