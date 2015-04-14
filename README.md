@@ -224,11 +224,11 @@ will do this for you:
     $ ./start_mongo.sh
     $ ./start_nginx.sh
 
-Following this, run the start script:
+Following this, run the start script (which is also generated during the linking stage):
 
     $ ./start.sh axes-home
 
-Which will launch all components using AXES-Home as the web frontend. Replace `axes-home`
+This will launch all components using AXES-Home as the web frontend. Replace `axes-home`
 with `axes-research` to use the AXES-Research frontend instead.
 
 The result will be a [GNU Screen instance](http://en.wikipedia.org/wiki/GNU_Screen)
