@@ -33,6 +33,7 @@ follows:
 
     $ wget http://nginx.org/download/nginx-1.7.11.tar.gz
     $ tar xvzp -f nginx-1.7.11.tar.gz
+    $ rm nginx-1.7.11.tar.gz
     $ mv nginx-1.7.11 nginx
     $ cd nginx
     $ ./configure --prefix=$PWD
@@ -148,6 +149,7 @@ is provided in the correct format. It can be obtained as follows:
 
     $ wget http://axis.ewi.utwente.nl/collections/cAXESOpen/cAXESOpenMini.tgz
     $ tar xvzp -f cAXESOpenMini.tgz
+    $ rm cAXESOpenMini.tgz
 
 This will create a `cAXESOpenMini` folder in the axes-lite directory. Please
 specify this path both as private and as public data set in `config.json`.

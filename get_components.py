@@ -41,12 +41,12 @@ def repo_clone(cmd, component, url, branch=None):
         return False
     if os.path.isdir(path):
         return False
-    cmd = ' '.join([cmd, 'clone', url, path])
-    subprocess.call(cmd, shell=True)
+    clone_cmd = ' '.join([cmd, 'clone', url, path])
+    subprocess.call(clone_cmd, shell=True)
     if branch:
         with utils.change_cwd(path):
-            cmd = ' '.join([cmd, 'checkout', branch])
-            subprocess.call(cmd, shell=True)
+            checkout_cmd = ' '.join([cmd, 'checkout', branch])
+            subprocess.call(checkout_cmd, shell=True)
     return True
 
 

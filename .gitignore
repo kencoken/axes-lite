@@ -5,6 +5,8 @@
 /axes-home/
 /axes-research/
 /imsearch-tools/
+/nginx/
+/mongodb/
 /nginx.conf
 /supervisord.conf
 /supervisord.log
