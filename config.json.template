@@ -35,21 +35,21 @@
             "server_port": 8080
         },
         "axes-home": {
-            "server_port": 8085
+            "server_port": 8085,
+            "mount_point": "/axes/home"
         },
         "axes-research": {
-            "server_port": 8086
+            "server_port": 8086,
+            "mount_point": "/axes/research"
         }
 
     },
     "config": {
         "axes-home": {
-            "debug": true,
-            "mount_point": "/axes/home"
+            "debug": true
         },
         "axes-research": {
             "debug": true,
-            "mount_point": "/axes/research",
             "admin_name": "Admin",
             "admin_email": "admin@site.com",
             "database_name": "axeslite",

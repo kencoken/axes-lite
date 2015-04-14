@@ -228,6 +228,28 @@ within the current shell within which all configured components will be started,
 which can be used to monitor the output of each of the components interactively.
 Use `Ctrl+a d` to detach from the screen session and leave it running in the background.
 
+### Accessing the web service
+
+Once AXES-LITE has been started, the web frontend can be accessed via NGINX in your
+browser at the following address:
+
+    http://localhost:<NGINX_PORT>/<MOUNT_POINT>
+
+Where the values of `<NGINX_PORT>` and `<MOUNT_POINT>` are specified in
+`config.json` as follows:
+
+|                                     | Key in configuration file         | Default value  |
+|-------------------------------------|:----------------------------------|:---------------|
+| 1.  `<NGINX_PORT>`                  | *links.nginx.server_port*         | 8080           |
+| 2a. `<MOUNT_POINT>` (AXES-Home)     | *links.axes-home.mount_point*     | /axes/home     |
+| 2b. `<MOUNT_POINT>` (AXES-Research) | *links.axes-research.mount_point* | /axes/research |
+
+Using the default configuration file, this results in the following URL for AXES-Home
+and AXES-Research respectively:
+
+    http://localhost:8080/axes/home
+    http://localhost:8080/axes/research
+
 ### Launching using Supervisor (recommended)
 
 Supervisor provides a fully featured process management system which helps to
