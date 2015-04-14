@@ -1,6 +1,13 @@
 AXES-LITE
 =========
 
+Copyright 2015, all rights reserved.
+
+Release: v0.1 (April 2015)
+
+Overview
+--------
+
 AXES-LITE provides a working example of how to link together several
 visual and multimedia search services developed as part of the
 [AXES project](http://www.axes-project.eu) using the LIMAS middleware
