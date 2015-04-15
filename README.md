@@ -71,6 +71,7 @@ First, the following components must be installed:
 
  - `cpuvisor-srv` available at: https://github.com/kencoken/cpuvisor-srv
  - `limas` available at: https://bitbucket.org/alyr/limas
+ - `imsearch-tools` available at: https://github.com/kencoken/imsearch-tools
 
 In addition, one or both of the two available web frontends is also required:
 
@@ -124,17 +125,28 @@ procedure, as detailed in the README:
     $ cd limas
     $ mvn install
 
-##### 3. AXES-Home interface
+##### 3. imsearch-tools
 
-Only the dependencies for AXES-Home need to be installed manually. To install
-them in a Python virtual environment, run the following commands:
+Only the dependencies for imsearch-tools need to be installed manually. This can
+be done in a Python virtual environment using the following commands:
+
+    $ cd imsearch-tools
+    $ virtualenv venv
+    $ . ./venv/bin/activate
+    $ pip install -r requirements.txt
+    $ deactivate
+
+##### 4. AXES-Home interface
+
+Only the dependencies for AXES-Home need to be installed manually. This can
+be done in a Python virtual environment using the following commands:
 
     $ cd axes-home/server
     $ virtualenv venv
     $ . ./venv/bin/activate
     $ pip install -r requirements.txt
 
-##### 4. AXES-Research interface
+##### 5. AXES-Research interface
 
 Only the dependencies for AXES-Research need to be installed manually, which
 can be accomplished as follows:
