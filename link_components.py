@@ -48,25 +48,59 @@ def prepare_cpuvisor(base_path, component_cfgs):
     # prepare config
     log.info('[cpuvisor] Preparing config...')
 
-    template_config = os.path.join(templates_dir, 'config.prototxt')
-    output_config = os.path.join(component_paths['cpuvisor-srv'],
-                                 'config.%s.prototxt' % collection['name'])
+    def prepare_config():
 
-    replace_patterns = {
-        '<MODELS_PATH>': models_path,
-        '<NEG_IM_PATH>': negimgs_path,
-        '<NEG_IM_INDEX>': negidx_path,
-        '<NEG_FEATS_FILE>': negfeats_path,
-        '<SERVER_ENDPOINT>': server_endpoint,
-        '<NOTIFY_ENDPOINT>': notify_endpoint,
-        '<IMAGE_CACHE_PATH>': image_cache_path,
-        '<RLIST_CACHE_PATH>': rlist_cache_path
-    }
-    replace_patterns = list(replace_patterns.iteritems())
+        template_config = os.path.join(templates_dir, 'config.prototxt')
+        output_config = os.path.join(component_paths['cpuvisor-srv'],
+                                     'config.%s.prototxt' % collection['name'])
 
-    with open(template_config, 'r') as src_f:
-        with open(output_config, 'w') as dst_f:
-            utils.copy_replace(src_f, dst_f, replace_patterns)
+        # if the config file already exists, read in fields added by index_data first
+        restore_fields = False
+
+        if os.path.exists(output_config):
+            restore_fields = True
+
+            def get_field(field_name):
+                return cpuvisortls.get_config_field(component_paths['cpuvisor-srv'],
+                                                    field_name,
+                                                    output_config)
+
+            dataset_im_paths = get_field('preproc_config.dataset_im_paths')
+            dataset_im_base_path = get_field('preproc_config.dataset_im_base_path')
+            dataset_feats_file = get_field('preproc_config.dataset_feats_file')
+
+        # write the new config file
+        replace_patterns = {
+            '<MODELS_PATH>': models_path,
+            '<NEG_IM_PATH>': negimgs_path,
+            '<NEG_IM_INDEX>': negidx_path,
+            '<NEG_FEATS_FILE>': negfeats_path,
+            '<SERVER_ENDPOINT>': server_endpoint,
+            '<NOTIFY_ENDPOINT>': notify_endpoint,
+            '<IMAGE_CACHE_PATH>': image_cache_path,
+            '<RLIST_CACHE_PATH>': rlist_cache_path
+        }
+        replace_patterns = list(replace_patterns.iteritems())
+
+        with open(template_config, 'r') as src_f:
+            with open(output_config, 'w') as dst_f:
+                utils.copy_replace(src_f, dst_f, replace_patterns)
+
+        # now restore fields added by index_data if required
+        if restore_fields:
+
+            def set_field(field_name, field_value):
+                cpuvisortls.set_config_field(component_paths['cpuvisor-srv'],
+                                             field_name,
+                                             field_value,
+                                             output_config)
+
+            set_field('preproc_config.dataset_im_paths', dataset_im_paths)
+            set_field('preproc_config.dataset_im_base_path', dataset_im_base_path)
+            set_field('preproc_config.dataset_feats_file', dataset_feats_file)
+
+
+    prepare_config()
 
     # prepare start script
     log.info('[cpuvisor] Preparing start script...')
