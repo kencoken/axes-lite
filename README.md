@@ -78,7 +78,7 @@ In addition, one or both of the two available web frontends is also required:
  - `axes-home` available at: https://github.com/kevinmcguinness/axes-home
  - `axes-research` available at: https://github.com/kevinmcguinness/axes-research
 
-**TODO: Add further details about the differences between these two interfaces here**
+Both the AXES home and AXES research interfaces are web based interfaces to the AXES components. The AXES research interface was developed for social science researchers and journalists and is designed to run in a standard web browser (Google Chrome is recommended). The AXES home interface is targeted at everyday home users, and was designed with tablet use in mind, but will still run in a standard web browser. Both interfaces offer similar functionality.
 
 The location of these components, along with other configuration settings
 related to AXES-LITE such as the location of the target data, are set using a
