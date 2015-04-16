@@ -22,7 +22,7 @@ multimedia retrieval system over any dataset of video data.
 
 ![AXES-LITE Architecture](resources/architecture.png)
 
-Currently the following core components are supported:
+Currently the following visual search components are supported:
 
  - `cpuvisor-srv` - On-the-fly visual category search from the University of Oxford
  - `uberclassifiers` - Uberclassifiers from KU Leuven
