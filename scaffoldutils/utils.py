@@ -10,6 +10,9 @@ import subprocess
 import shutil
 import tempfile
 
+import urlparse
+import httplib
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -90,6 +93,31 @@ def ensure_fname_path_exists(fname):
         os.makedirs(os.path.dirname(fname))
     except os.error:
         pass
+
+
+@contextlib.contextmanager
+def make_http_connection(host, scheme='http'):
+
+    if scheme == 'http':
+        conn = httplib.HTTPConnection(host)
+    elif scheme == 'https':
+        conn = httplib.HTTPSConnection(host)
+    else:
+        raise RuntimeError('Unknown URL scheme: %s' % scheme)
+
+    yield conn
+    conn.close()
+
+
+def check_url_exists(url):
+
+    url_parts = urlparse.urlparse(url)
+
+    with make_http_connection(url_parts.netloc, url_parts.scheme) as conn:
+        conn.request('HEAD', url_parts.path)
+        response = conn.getresponse()
+
+    return response.status == 200
 
 
 def touch_dir(path, token):

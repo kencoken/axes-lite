@@ -8,10 +8,10 @@ log = logging.getLogger("index_data")
 
 import os
 import sys
-import subprocess
-import argparse
 import tarfile
 import urlparse
+import filecmp
+import time
 from scaffoldutils import utils
 
 
@@ -21,6 +21,35 @@ def index_cpuvisor(base_path, component_cfgs):
     links = component_cfgs['links']
     collection = component_cfgs['collection']
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
+
+    precomputed_urls = {
+        'cAXESOpen': {
+            'paths': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetpaths_cAXESOpen.txt',
+            'feats': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetfeats_cAXESOpen_VGG_CNN_M_128.tgz'
+        }
+    }
+
+    # ensure all precomputed urls exist
+    for dataset in precomputed_urls.keys():
+        urls = precomputed_urls[dataset]
+
+        exists = (utils.check_url_exists(urls['paths']) and
+                  utils.check_url_exists(urls['feats']))
+
+        if not exists:
+            log.warning('[cpuvisor] Precomputed filelist/feature URLs for '
+                        'dataset %s did not exist. Will compute features '
+                        'for this dataset from scratch if the feature file '
+                        'does not already exist.' % dataset)
+            del precomputed_urls[dataset]
+
+            for i in reversed(range(1,6)):
+                sys.stdout.write('Continuing in %d seconds...\r' % i)
+                sys.stdout.flush()
+                time.sleep(1)
+            sys.stdout.write('\033[K\r')
+            sys.stdout.flush()
+
 
     # ensure index directory exists
     try:
@@ -42,10 +71,45 @@ def index_cpuvisor(base_path, component_cfgs):
     dataset_im_paths_file = os.path.join(index_dir, 'dsetpaths_%s.txt' % collection['name'])
     dataset_feats_file = os.path.join(index_dir, 'dsetfeats_%s.binaryproto' % collection['name'])
 
-    # generate filelist for dataset
+    # generate/download filelist for dataset
+
+    def download_filelist(collection_name, fname, root_dir):
+
+        if collection_name not in precomputed_urls:
+            return False
+        else:
+            url = precomputed_urls[collection_name]['paths']
+            log.info('[cpuvisor] Downloading dataset filelist...')
+            log.info('[cpuvisor] URL is: %s' % url)
+
+            assert(os.path.splitext(urlparse.urlparse(url).path)[1] == os.path.splitext(fname)[1])
+            utils.subproc_call_check(['wget -O %s %s' % (fname, url)], shell=True)
+
+            # re-generate and check for consistency
+            with utils.make_temp_directory() as temp_dir:
+                regen_fname = os.path.join(temp_dir, os.path.split(fname)[1])
+                generate_filelist(regen_fname, root_dir, True)
+
+                if filecmp.cmp(fname, regen_fname):
+                    raise RuntimeError('Downloaded filelist for dataset <%s>: %s '
+                                       'is inconsistent with images found in '
+                                       'dataset directory: %s' %
+                                       (collection_name, fname, root_dir))
+
+
+            return True
+
+    def generate_filelist(fname, root_dir, silent=False):
+
+        if not silent:
+            log.info('[cpuvisor] Generating dataset filelist...')
+
+        cpuvisorutil.generate_imagelist(fname, root_dir)
+
     if not os.path.exists(dataset_im_paths_file):
-        log.info('[cpuvisor] Generating dataset filelist...')
-        cpuvisorutil.generate_imagelist(dataset_im_paths_file, dataset_keyframes_path)
+        if not download_filelist(collection['name'], dataset_im_paths_file,
+                                 dataset_keyframes_path):
+            generate_filelist(dataset_im_paths_file, dataset_keyframes_path)
 
 
     # update config with paths
@@ -70,14 +134,10 @@ def index_cpuvisor(base_path, component_cfgs):
 
     def download_feats(collection_name, fname):
 
-        precomputed_feat_urls = {
-            'cAXESOpen': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetfeats_cAXESOpen_VGG_CNN_M_128.tgz'
-        }
-
-        if collection_name not in precomputed_feat_urls:
+        if collection_name not in precomputed_urls:
             return False
         else:
-            url = precomputed_feat_urls[collection_name]
+            url = precomputed_urls[collection_name]['feats']
             log.info('[cpuvisor] Downloading features for dataset...')
             log.info('[cpuvisor] URL is: %s' % url)
 
@@ -131,33 +191,33 @@ def index_limas(base_path, component_cfgs):
                conf_fn,
                collection,
                os.path.join(data['private_data'], 'ffprobe')]
-        subprocess.call(cmd)
+        utils.subproc_call_check(cmd)
 
         # index video-level metatada
-        print os.path.join(data['private_data'], 'metadata')
-        subprocess.call(["scripts/integration/index_meta.py",
-                         conf_fn,
-                         collection,
-                         os.path.join(data['private_data'], 'metadata')])
+        cmd = ["scripts/integration/index_meta.py",
+               conf_fn,
+               collection,
+               os.path.join(data['private_data'], 'metadata')]
+        utils.subproc_call_check(cmd)
 
         # index shot and keyframe data
         cmd = ["scripts/integration/index_shots_from_timings.py",
                conf_fn,
                collection,
                os.path.join(data['private_data'], 'shottimings')]
-        subprocess.call(cmd)
+        utils.subproc_call_check(cmd)
 
         # index shot and keyframe data
         cmd = ["bin/limas",
                'normalize',
                conf_fn ]
-        subprocess.call(cmd)
+        utils.subproc_call_check(cmd)
 
         # index shot and keyframe data
         cmd = ["bin/limas",
                'indexASR',
-               conf_fn ]
-        subprocess.call(cmd)
+               conf_fn]
+        utils.subproc_call_check(cmd)
 
 
 # main entry point
