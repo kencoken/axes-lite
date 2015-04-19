@@ -175,7 +175,7 @@ def prepare_limas(base_path, component_cfgs):
             '<PATH_TO_INDEX_STRUCTURES>': os.path.join(collection['paths']['index_data'],
                                                        'limas'),
             '<CPUVISOR_PORT>': str(links['cpuvisor-srv']['server_port']),
-            '<CPUVISOR_NOTIFY_PORT>': str(links['cpuvisor-srv']['notify_port'])
+            '<CPUVISOR_NOTIFY_PORT>': str(links['cpuvisor-srv']['notify_port']),
             '<URL_TO_COLLECTION_PATH>': collection['url'],
             '<MONGODB_PORT>': str(links['mongodb']['server_port']),
             '<IMSEARCH_PORT>': str(links['imsearch-tools']['server_port'])
