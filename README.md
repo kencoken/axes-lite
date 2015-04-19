@@ -47,7 +47,7 @@ follows:
     $ ./configure --prefix=$PWD
     $ make
     $ make install
-
+    $ mkdir logs
 
 ##### 2. MongoDB
 
