@@ -23,9 +23,17 @@ def index_cpuvisor(base_path, component_cfgs):
     index_dir = os.path.join(collection['paths']['index_data'], 'cpuvisor-srv')
 
     precomputed_urls = {
-        'cAXESOpen': {
+        'cAXESOpenMini': {
             'paths': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetpaths_cAXESOpen.txt',
             'feats': 'http://www.robots.ox.ac.uk/~vgg/software/deep_eval/releases/dsetfeats_cAXESOpen_VGG_CNN_M_128.tgz'
+        },
+        'cAXESOpen': {
+            'paths': 'http://axis.ewi.utwente.nl/collections/cAXESOpen/dsetpaths_cAXESOpen.txt',
+            'feats': 'http://axis.ewi.utwente.nl/collections/cAXESOpen/dsetfeats_cAXESOpen_VGG_CNN_M_128.tgz'
+        },
+        'cAXESOpenCnn': {
+            'paths': 'http://axis.ewi.utwente.nl/collections/cAXESOpen/dsetpaths_cAXESOpenCnn.txt',
+            'feats': 'http://axis.ewi.utwente.nl/collections/cAXESOpen/dsetfeats_cAXESOpenCnn_VGG_CNN_M_128.tgz'
         }
     }
 
@@ -207,15 +215,28 @@ def index_limas(base_path, component_cfgs):
                os.path.join(data['private_data'], 'shottimings')]
         utils.subproc_call_check(cmd)
 
-        # index shot and keyframe data
+        # index asr data
+        cmd = ["scripts/integration/index_asr_from_timings.py",
+               conf_fn,
+               collection,
+               os.path.join(data['private_data'], 'asr')]
+        utils.subproc_call_check(cmd)
+
+        # normalize  data
         cmd = ["bin/limas",
                'normalize',
                conf_fn ]
         utils.subproc_call_check(cmd)
 
-        # index shot and keyframe data
+        # index data to inverted files
         cmd = ["bin/limas",
                'indexASR',
+               conf_fn]
+        utils.subproc_call_check(cmd)
+
+        # create collection statistics
+        cmd = ["bin/limas",
+               'es',
                conf_fn]
         utils.subproc_call_check(cmd)
 
