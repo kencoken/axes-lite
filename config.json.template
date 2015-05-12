@@ -9,7 +9,7 @@
         "mongodb": "mongodb/"
     },
     "collection": {
-        "name": "cAXESOpen",
+        "name": "cAXESOpenMini",
         "url": "http://localhost:<nginx_port>/public",
         "paths": {
             "public_data": "cAXESOpenMini/",
