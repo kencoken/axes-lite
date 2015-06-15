@@ -2,6 +2,7 @@
     "components": {
         "cpuvisor-srv": "cpuvisor-srv/",
         "imsearch-tools": "imsearch-tools/",
+	"medpackage": "medpackage/",
         "limas": "limas/",
         "axes-home": "axes-home/",
         "axes-research": "axes-research/",
